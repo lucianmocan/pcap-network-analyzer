@@ -63,12 +63,13 @@ Protocols supported:
 - develop a GUI
 
 
-
 ## 3. Architecture Overview
 
 I want an architecture that follows, to a certain degree, the principle of hexagonal architecture.
 
 The idea is to be able to develop each component independently, to facilitate writing tests and ease future development.
+
+![Architecture Chart](https://i.imgur.com/mIDBUcJ.jpeg)
 
 #### 3.1 Layered Components
 
