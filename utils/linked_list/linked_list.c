@@ -48,12 +48,13 @@ add_node(node_t *head, void *data)
  * @return node_t* 
  */
 node_t*
-remove_node(node_t *head, void *data)
+remove_node(node_t *head)
 {
     if (head == NULL){
         return NULL;
     }
     node_t *next = head->next;
+    free(head->data);
     free(head);
     return next;
 }

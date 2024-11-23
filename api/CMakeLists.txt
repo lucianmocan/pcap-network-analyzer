@@ -21,8 +21,3 @@ target_link_libraries(api PRIVATE pcap)
 
 target_link_libraries(api PUBLIC linked_list interface)
 target_link_libraries(interface PUBLIC linked_list)
-
-# Link the bsd_string library if it's created
-if (TARGET bsd_string)
-    target_link_libraries(interface PUBLIC bsd_string)
-endif()

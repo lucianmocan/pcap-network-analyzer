@@ -2,7 +2,6 @@
 #define INTERFACE_H
 
 #include "linked_list.h"
-#include "interface.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,10 +15,6 @@
 #endif
 #ifdef __linux__
 #include <linux/if_packet.h>
-#endif
-
-#ifdef NEED_STRLCPY
-#include "bsd_string.h"
 #endif
 
 typedef struct dev_interface {
