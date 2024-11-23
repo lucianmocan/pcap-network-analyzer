@@ -4,10 +4,15 @@ add_library(linked_list
     linked_list/linked_list.h
 )
 
+add_library(bsd_string
+    bsd_string/bsd_string.c
+    bsd_string/bsd_string.h
+)
+
 
 # Include the directory containing the header files
 target_include_directories(linked_list PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/linked_list)
-
+target_include_directories(bsd_string PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/bsd_string)
 
 # Create the test executable for linked list
 add_executable(test_linked_list

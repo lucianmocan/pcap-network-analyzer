@@ -16,6 +16,7 @@
 #endif
 #ifdef __linux__
 #include <linux/if_packet.h>
+#include "bsd_string.h"
 #endif
 
 typedef struct dev_interface {
