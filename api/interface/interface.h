@@ -16,6 +16,12 @@
 #endif
 #ifdef __linux__
 #include <linux/if_packet.h>
+#endif
+#ifdef NEED_STRLCPY
+#include "bsd_string.h"
+#endif
+
+#ifdef NEED_STRLCAT
 #include "bsd_string.h"
 #endif
 
