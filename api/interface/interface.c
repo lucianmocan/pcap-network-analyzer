@@ -1,7 +1,4 @@
 #include "interface.h"
-#include <stdio.h>
-#include <stdlib.h>
-
 
 /**
  * @brief Get the interfaces object
@@ -134,16 +131,7 @@ get_interface_infos(pcap_if_t* dev)
             #ifdef __linux__
             else if (addr->addr->sa_family == AF_PACKET){
                 struct sockaddr_ll *sll = (struct sockaddr_ll *)addr->addr;
-                char *mac = (char *)malloc(18);
-                if (mac == NULL){
-                    fprintf(stderr, "Failed to allocate memory for mac\n");
-                    exit(EXIT_FAILURE);
-                }
-                for (int i = 0; i < 6; i++){
-                    snprintf(mac, 18, "%02x", sll->sll_addr[i]);
-                    if (i != 5)
-                        strncat(mac, ":", 18);
-                }
+                char *mac = write_mac_address(sll->sll_addr);
                 dev_interface->addresses = add_node(dev_interface->addresses, mac);
             }
             #endif

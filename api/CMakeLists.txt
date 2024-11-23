@@ -1,6 +1,3 @@
-# Minimum CMake version
-cmake_minimum_required(VERSION 3.12)
-
 # Add the library for the API module
 add_library(api
     api.c
@@ -19,8 +16,7 @@ target_include_directories(interface PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/interfac
 
 target_link_libraries(api PUBLIC linked_list interface)
 
-target_link_libraries(interface PRIVATE pcap)
-target_link_libraries(interface PUBLIC linked_list)
+target_link_libraries(interface PUBLIC pcap linked_list mac_address)
 
 # Create the test executable for the API module
 add_executable(test_interface

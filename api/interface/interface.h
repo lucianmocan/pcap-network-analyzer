@@ -2,6 +2,7 @@
 #define INTERFACE_H
 
 #include "linked_list.h"
+#include "mac_address.h"
 
 #include <stdio.h>
 #include <stdlib.h>
