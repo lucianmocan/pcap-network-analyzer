@@ -109,7 +109,7 @@ get_interface_infos(pcap_if_t* dev)
                     if (i != 5)
                         strlcat(mac, ":", 18);
                 }
-                dev->addresses = add_node(dev_interface->addresses, mac);
+                dev_interface->addresses = add_node(dev_interface->addresses, mac);
             }
             #endif
         }

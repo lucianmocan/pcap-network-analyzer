@@ -25,5 +25,4 @@ target_link_libraries(interface PUBLIC linked_list)
 # Link the bsd_string library if it's created
 if (TARGET bsd_string)
     target_link_libraries(interface PUBLIC bsd_string)
-    target_include_directories(interface PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../utils/bsd_string)
 endif()
