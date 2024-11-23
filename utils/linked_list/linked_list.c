@@ -1,5 +1,6 @@
 #include "linked_list.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /**
  * @brief Create a node object
@@ -12,7 +13,8 @@ create_node(void *data)
 {
     node_t *node = (node_t*)malloc(sizeof(node_t));
     if (node == NULL){
-        return NULL;
+        fprintf(stderr, "Failed to allocate memory for node\n");
+        exit(EXIT_FAILURE);
     }
     node->data = data;
     node->next = NULL;
@@ -57,7 +59,23 @@ remove_node(node_t *head, void *data)
 }
 
 /**
- * @brief Free a linked list
+ * @brief Free a linked list, leave the data untouched
+ * 
+ * @param head 
+ */
+void 
+free_list_nodes_only(node_t *head)
+{
+    node_t *current = head;
+    while (current != NULL){
+        node_t *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+/**
+ * @brief Free a linked list along with the data on the nodes
  * 
  * @param head 
  */
@@ -67,6 +85,7 @@ free_list(node_t *head)
     node_t *current = head;
     while (current != NULL){
         node_t *next = current->next;
+        free(current->data);
         free(current);
         current = next;
     }
