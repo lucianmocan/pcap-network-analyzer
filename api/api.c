@@ -31,5 +31,6 @@ void
 free_interfaces(pcap_if_t *alldevsp)
 {
     pcap_freealldevs(alldevsp);
+    alldevsp = NULL;
 }
 

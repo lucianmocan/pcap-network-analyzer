@@ -30,12 +30,14 @@ display_help()
 void 
 display_interfaces()
 {
+    // Get all interfaces using the API (pcap)
     pcap_if_t *alldevsp;
     if ((alldevsp = get_interfaces()) == NULL){
         fprintf(stderr, "Can't find any devices\n");
         return;
     };
 
+    // Display all interfaces + infos
     pcap_if_t *alldevsp_head = alldevsp;
     for (; alldevsp != NULL; alldevsp = alldevsp->next){
             printf("-----------------------------------\n");
