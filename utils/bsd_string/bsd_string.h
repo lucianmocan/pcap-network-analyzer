@@ -1,5 +1,3 @@
-
-
 #ifndef BSD_STRING_H
 #define BSD_STRING_H
 
