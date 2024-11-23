@@ -20,4 +20,9 @@ target_include_directories(interface PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/interfac
 target_link_libraries(api PRIVATE pcap)
 
 target_link_libraries(api PUBLIC linked_list interface)
-target_link_libraries(interface PUBLIC linked_list bsd_string)
+target_link_libraries(interface PUBLIC linked_list)
+
+# Link the bsd_string library if it's created
+if (TARGET bsd_string)
+    target_link_libraries(interface PRIVATE bsd_string)
+endif()

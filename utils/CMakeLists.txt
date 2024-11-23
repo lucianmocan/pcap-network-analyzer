@@ -4,16 +4,33 @@ add_library(linked_list
     linked_list/linked_list.h
 )
 
-add_library(bsd_string
-    bsd_string/strlcpy.c
-    bsd_string/strlcat.c
-    bsd_string/bsd_string.h
-)
+include(CheckFunctionExists)
+
+# Check for strlcpy and strlcat
+check_function_exists(strlcpy HAVE_STRLCPY)
+check_function_exists(strlcat HAVE_STRLCAT)
+
+# Add these definitions globally
+if (NOT HAVE_STRLCPY)
+    add_definitions(-DNEED_STRLCPY)
+endif()
+
+if (NOT HAVE_STRLCAT)
+    add_definitions(-DNEED_STRLCAT)
+endif()
+
+# Add a library only if we need to define the functions
+if (NOT HAVE_STRLCPY OR NOT HAVE_STRLCAT)
+    add_library(bsd_string
+        bsd_string/strlcpy.c
+        bsd_string/strlcat.c
+    )
+    target_include_directories(bsd_string PUBLIC bsd_string)
+endif()
 
 
 # Include the directory containing the header files
 target_include_directories(linked_list PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/linked_list)
-target_include_directories(bsd_string PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/bsd_string)
 
 # Create the test executable for linked list
 add_executable(test_linked_list

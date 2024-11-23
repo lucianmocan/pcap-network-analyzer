@@ -50,5 +50,4 @@ strlcpy(char *dst, const char *src, size_t dsize)
 
 	return(src - osrc - 1);	/* count does not include NUL */
 }
-DEF_WEAK(strlcpy);
 #endif
