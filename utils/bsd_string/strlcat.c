@@ -1,3 +1,4 @@
+#ifdef __linux__
 /*	$OpenBSD: strlcat.c,v 1.19 2019/01/25 00:19:25 millert Exp $	*/
 
 /*
@@ -17,6 +18,7 @@
  */
 
 #include <sys/types.h>
+#include <string.h>
 #include "bsd_string.h"
 
 /*
@@ -54,3 +56,4 @@ strlcat(char *dst, const char *src, size_t dsize)
 	return(dlen + (src - osrc));	/* count does not include NUL */
 }
 DEF_WEAK(strlcat);
+#endif

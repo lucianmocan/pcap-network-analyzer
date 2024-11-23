@@ -1,3 +1,4 @@
+#ifdef __linux__
 /*	$OpenBSD: strlcpy.c,v 1.16 2019/01/25 00:19:25 millert Exp $	*/
 
 /*
@@ -17,7 +18,8 @@
  */
 
 #include <sys/types.h>
-#include <bsd_string.h>
+#include <string.h>
+#include "bsd_string.h"
 
 /*
  * Copy string src to buffer dst of size dsize.  At most dsize-1
@@ -49,3 +51,4 @@ strlcpy(char *dst, const char *src, size_t dsize)
 	return(src - osrc - 1);	/* count does not include NUL */
 }
 DEF_WEAK(strlcpy);
+#endif

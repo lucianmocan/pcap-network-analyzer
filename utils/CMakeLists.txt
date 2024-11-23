@@ -5,7 +5,8 @@ add_library(linked_list
 )
 
 add_library(bsd_string
-    bsd_string/bsd_string.c
+    bsd_string/strlcpy.c
+    bsd_string/strlcat.c
     bsd_string/bsd_string.h
 )
 
