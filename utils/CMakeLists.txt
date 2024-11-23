@@ -22,6 +22,7 @@ endif()
 # Add a library only if we need to define the functions
 if (NOT HAVE_STRLCPY OR NOT HAVE_STRLCAT)
     add_library(bsd_string
+        bsd_string/bsd_string.h
         bsd_string/strlcpy.c
         bsd_string/strlcat.c
     )
