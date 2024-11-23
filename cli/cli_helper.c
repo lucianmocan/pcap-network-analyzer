@@ -36,6 +36,7 @@ display_interfaces()
         return;
     };
 
+    pcap_if_t *alldevsp_head = alldevsp;
     for (; alldevsp != NULL; alldevsp = alldevsp->next){
             printf("-----------------------------------\n");
             dev_interface_t dev = get_interface_infos(alldevsp);
@@ -48,5 +49,5 @@ display_interfaces()
             free_interface_infos(dev);
     }
 
-    free_interfaces(alldevsp);
+    free_interfaces(alldevsp_head);
 }

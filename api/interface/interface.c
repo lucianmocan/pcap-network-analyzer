@@ -21,37 +21,41 @@ get_interface_infos(pcap_if_t* dev)
 
     char tmp[50] = "<";
     if (dev->flags & PCAP_IF_UP) 
-        strlcat(tmp, "UP", sizeof(tmp));
+        strncat(tmp, "UP", sizeof(tmp) - strlen(tmp) - 1);
     else 
-        strlcat(tmp, "DOWN", sizeof(tmp));
+        strncat(tmp, "DOWN", sizeof(tmp) - strlen(tmp) - 1);
     if (dev->flags & PCAP_IF_LOOPBACK) 
-        strlcat(tmp, ",LOOPBACK", sizeof(tmp));
+        strncat(tmp, ",LOOPBACK", sizeof(tmp) - strlen(tmp) - 1);
     if (dev->flags & PCAP_IF_RUNNING)  
-        strlcat(tmp, ",RUNNNING", sizeof(tmp));
+        strncat(tmp, ",RUNNNING", sizeof(tmp) - strlen(tmp) - 1);
     if (dev->flags & PCAP_IF_WIRELESS) 
-        strlcat(tmp, ",WIRELESS", sizeof(tmp));
+        strncat(tmp, ",WIRELESS", sizeof(tmp) - strlen(tmp) - 1);
 
-    strlcat(tmp, "> ", sizeof(tmp));  
+    strncat(tmp, "> ", sizeof(tmp) - strlen(tmp) - 1);  
     switch (dev->flags & PCAP_IF_CONNECTION_STATUS){
         case PCAP_IF_CONNECTION_STATUS_CONNECTED:
-            strlcat(tmp, "status UP", sizeof(tmp));
+            strncat(tmp, "status UP", sizeof(tmp) - strlen(tmp) - 1);
             break;
         case PCAP_IF_CONNECTION_STATUS_DISCONNECTED:
-            strlcat(tmp, "status DOWN", sizeof(tmp));
+            strncat(tmp, "status DOWN", sizeof(tmp) - strlen(tmp) - 1);
             break;
         case PCAP_IF_CONNECTION_STATUS_UNKNOWN:
-            strlcat(tmp, "status UNKNOWN", sizeof(tmp));
+            strncat(tmp, "status UNKNOWN",sizeof(tmp) - strlen(tmp) - 1);
             break;
         default:
-            strlcat(tmp, "\n", sizeof(tmp));
+            strncat(tmp, "\n", sizeof(tmp) - strlen(tmp) - 1);
     }
-    strlcpy(dev_interface->flags, tmp, sizeof(dev_interface->flags));
+    strncpy(dev_interface->flags, tmp, sizeof(dev_interface->flags) - 1);
+    dev_interface->flags[sizeof(dev_interface->flags) - 1] = '\0';
 
     // print the interface description
     if (dev->description != NULL){
         dev_interface->description = dev->description;
     }
 
+    // set pointer to NULL
+    dev_interface->addresses = NULL;
+    
     // print the interface addresses
     if (dev->addresses != NULL) {
         for (pcap_addr_t *addr = dev->addresses; addr != NULL; addr = addr->next) {
@@ -62,7 +66,7 @@ get_interface_infos(pcap_if_t* dev)
                     exit(EXIT_FAILURE);
                 }
 
-                strlcat(ip4, "IPv4: ", INET_ADDRSTRLEN + sizeof("IPv4: "));
+                snprintf(ip4, INET_ADDRSTRLEN + sizeof("IPv4: "), "IPv4: ");
                 struct sockaddr_in *sin = (struct sockaddr_in *)addr->addr;
                 inet_ntop(AF_INET, &(sin->sin_addr), ip4 + sizeof("IPv4: ") - 1, INET_ADDRSTRLEN);
                 dev_interface->addresses = add_node(dev_interface->addresses, ip4);
@@ -73,7 +77,7 @@ get_interface_infos(pcap_if_t* dev)
                     exit(EXIT_FAILURE);
                 }
 
-                strlcat(ip6, "IPv6: ", INET6_ADDRSTRLEN + sizeof("IPv6: "));
+                snprintf(ip6, INET6_ADDRSTRLEN + sizeof("IPv6: "), "IPv6: ");
                 struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)addr->addr;
                 inet_ntop(AF_INET6, &(sin6->sin6_addr), ip6 + sizeof("IPv6: ") - 1, INET6_ADDRSTRLEN);
                 dev_interface->addresses = add_node(dev_interface->addresses, ip6);
@@ -91,8 +95,7 @@ get_interface_infos(pcap_if_t* dev)
                     free(mac);
                     continue;
                 }
-                strlcat(mac, "MAC: ", 18 + sizeof("MAC: "));
-                strlcat(mac, link_ntoa(sdl), 18 + sizeof("MAC: "));
+                snprintf(mac, 18 + sizeof("MAC: "), "MAC: %s", link_ntoa(sdl));
                 dev_interface->addresses = add_node(dev_interface->addresses, mac);
             }
             #endif
@@ -107,7 +110,7 @@ get_interface_infos(pcap_if_t* dev)
                 for (int i = 0; i < 6; i++){
                     snprintf(mac, 18, "%02x", sll->sll_addr[i]);
                     if (i != 5)
-                        strlcat(mac, ":", 18);
+                        strncat(mac, ":", 18);
                 }
                 dev_interface->addresses = add_node(dev_interface->addresses, mac);
             }
@@ -121,8 +124,6 @@ get_interface_infos(pcap_if_t* dev)
 void
 free_interface_infos(dev_interface_t dev)
 {
-    free(dev->name);
-    free(dev->description);
     free_list(dev->addresses);
     free(dev);
 }
