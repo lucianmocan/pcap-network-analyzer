@@ -5,7 +5,4 @@
 #include <net/ethernet.h>
 #include "interface.h"
 
-pcap_if_t* get_interfaces();
-void free_interfaces(pcap_if_t *alldevsp);
-
 #endif

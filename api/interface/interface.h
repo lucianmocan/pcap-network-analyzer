@@ -25,6 +25,9 @@ typedef struct dev_interface {
 } *dev_interface_t;
 
 
+pcap_if_t* get_interfaces();
+void free_interfaces(pcap_if_t *alldevsp);
+
 dev_interface_t get_interface_infos(pcap_if_t* dev);
 void free_interface_infos(dev_interface_t dev);
 

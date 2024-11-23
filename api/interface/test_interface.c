@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <pcap.h>
-#include "api.h"
+#include "interface.h"
 
 // Test for get_interfaces
 void test_get_interfaces()
