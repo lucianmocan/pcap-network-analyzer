@@ -23,7 +23,15 @@ void
 test_ecn_desc()
 {
     char ecn_desc[ECN_DESC_SIZE];
+
+    #ifdef __linux__
+    get_ecn_desc(IPTOS_ECN_NOT_ECT, ecn_desc, true);
+    #endif
+
+    #ifdef __APPLE__
     get_ecn_desc(IPTOS_ECN_NOTECT, ecn_desc, true);
+    #endif
+    
     assert(strcmp(ecn_desc, "Not-ECT: Not ECN-Capable Transport") == 0);
 }
 

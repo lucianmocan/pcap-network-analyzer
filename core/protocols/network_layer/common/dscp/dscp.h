@@ -10,6 +10,10 @@
 DSCP values: https://www.iana.org/assignments/dscp-registry/dscp-registry.xhtml
 */
 
+#ifdef __linux__
+#define IPTOS_DSCP_SHIFT 2
+#endif
+
 // DSCP Pool 1 Codepoints
 // Class Selector
 #define CS0 0           

@@ -15,7 +15,12 @@ get_ecn_desc(uint8_t ecn, char *ecn_desc, bool verbose)
         return;
     }
     switch(ecn){
+        #ifdef __APPLE__
         case IPTOS_ECN_NOTECT:
+        #endif
+        #ifdef __linux__
+        case IPTOS_ECN_NOT_ECT:
+        #endif
             if (verbose)
                 snprintf(ecn_desc, ECN_DESC_SIZE, "Not-ECT: Not ECN-Capable Transport");
             else
@@ -76,7 +81,7 @@ get_dscp_desc(uint8_t dscp, char *dscp_desc, bool verbose)
             break;
         case CS2:
             if (verbose)
-                snprintf(dscp_desc, DSCP_DESC_SIZE, "CS2: Network operations, administration, and management (OAM)");
+                snprintf(dscp_desc, DSCP_DESC_SIZE, "CS2: Network OAM");
             else
                 snprintf(dscp_desc, DSCP_DESC_SIZE, "CS2");
             break;
