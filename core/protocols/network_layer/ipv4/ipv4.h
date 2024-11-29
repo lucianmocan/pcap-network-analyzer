@@ -10,6 +10,7 @@
 #include <stdbool.h>
 
 #include "mac_address.h"
+#include "dscp.h"
 
 typedef struct my_ipv4_header {
     uint8_t version : 4;
@@ -20,14 +21,14 @@ typedef struct my_ipv4_header {
     DSCP: https://datatracker.ietf.org/doc/html/rfc2474#section-3
     DSCP: first 6 bits of ToS 
     */
-    char dscp_desc[32];      // DSCP [0-63]
+    char dscp_desc[DSCP_DESC_SIZE];    // DSCP [0-63]
     uint8_t dscp_value;    // Description of the DSCP value
 
     /*
     ECN: https://datatracker.ietf.org/doc/html/rfc3168#section-5 [Page 8]
     ECN: last 2 bits of ToS
     */
-    char ecn_desc[40];       // ECN [0-3]
+    char ecn_desc[ECN_DESC_SIZE];     // ECN [0-3]
     uint8_t ecn_value;     // Description of the ECN value
 
     uint16_t total_length;  
@@ -59,6 +60,6 @@ typedef struct my_ipv4_header {
 
 } my_ipv4_header_t;
 
-my_ipv4_header_t parse_ipv4(const u_char *packet);
+my_ipv4_header_t parse_ipv4(const u_char *packet, bool verbose);
 
 #endif
