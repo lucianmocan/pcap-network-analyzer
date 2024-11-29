@@ -10,41 +10,25 @@ It provides:
 - a **CLI** interface for immediate interaction and usability
 - a **GUI** planned for future development
 
-Protocols supported: 
-
-- [ ] Ethernet  
-
-- [ ] IPv4  
-
-- [ ] IPv6  
-
-- [ ] UDP  
-
-- [ ] TCP  
-
-- [ ] ICMP  
-
-- [ ] ARP  
-
-- [ ] ICMPv6  
-
-- [ ] BOOTP  
-
-- [ ] DHCP  
-
-- [ ] DNS  
-
-- [ ] HTTP  
-
-- [ ] FTP  
-
-- [ ] SMTP  
-
-- [ ] IMAP  
-
-- [ ] POP3  
-
-- [ ] TELNET 
+| **Protocol** | **Parser**         | **CLI**           | **Test Coverage** |
+|--------------|--------------------|-------------------|-------------------|
+| Ethernet     | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
+| IPv4         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| IPv6         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| UDP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| TCP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| ICMP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| ARP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| ICMPv6       | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| BOOTP        | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| DHCP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| DNS          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| HTTP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| FTP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| SMTP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| IMAP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| POP3         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| TELNET       | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
 
 
 
