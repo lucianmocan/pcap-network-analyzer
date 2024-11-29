@@ -1,6 +1,13 @@
 
 #include "ethernet.h"
 
+/**
+ * @brief Parse the ethernet header off a packet and
+ * return all the information in a my_ethernet_header_t struct
+ * 
+ * @param packet 
+ * @return my_ethernet_header_t 
+ */
 my_ethernet_header_t 
 parse_ethernet(const u_char *packet)
 {
