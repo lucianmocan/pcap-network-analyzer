@@ -12,6 +12,11 @@
 #include "mac_address.h"
 #include "dscp.h"
 
+#define FLAGS_DESC_SIZE 32
+#define PROTOCOL_NAME_SIZE 42
+#define IP_ADDR_SIZE 16
+
+
 typedef struct my_ipv4_header {
     uint8_t version : 4;
     uint8_t header_length : 4;
@@ -40,7 +45,7 @@ typedef struct my_ipv4_header {
     flags DF: 0 = May Fragment, 1 = Don't Fragment
     flags MF: 0 = Last Fragment, 1 = More Fragments
     */
-    char flags_desc[32]; // Description of the flags
+    char flags_desc[FLAGS_DESC_SIZE]; // Description of the flags
     struct {
         uint8_t reserved: 1;
         uint8_t dont_fragment: 1;
@@ -51,13 +56,13 @@ typedef struct my_ipv4_header {
     uint8_t time_to_live;
 
     uint8_t protocol;
-    char protocol_name[42];
+    char protocol_name[PROTOCOL_NAME_SIZE];
 
     uint16_t checksum;
     bool checksum_correct;
 
-    char source_ipv4[16];
-    char destination_ipv4[16];
+    char source_ipv4[IP_ADDR_SIZE];
+    char destination_ipv4[IP_ADDR_SIZE];
 
 } my_ipv4_header_t;
 

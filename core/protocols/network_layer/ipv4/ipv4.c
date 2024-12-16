@@ -30,14 +30,14 @@ parse_ipv4(const u_char *packet, bool verbose)
     ipv4_header.total_length = ntohs(ip->ip_len);
     ipv4_header.identification = ntohs(ip->ip_id);
 
-    // Flags
-    ipv4_header.flags.reserved = (ip->ip_off & IP_RF) >> 15;
-    ipv4_header.flags.dont_fragment = (ip->ip_off & IP_DF) >> 14;
-    ipv4_header.flags.more_fragments = (ip->ip_off & IP_MF) >> 13;
-    get_flags_desc(ipv4_header.flags_desc, ip->ip_off, verbose);
-
     // Fragment offset
     ipv4_header.fragment_offset = ntohs(ip->ip_off) & IP_OFFMASK;
+
+    // Flags
+    ipv4_header.flags.reserved = (ntohs(ip->ip_off) & IP_RF) >> 15;
+    ipv4_header.flags.dont_fragment = (ntohs(ip->ip_off) & IP_DF) >> 14;
+    ipv4_header.flags.more_fragments = (ntohs(ip->ip_off) & IP_MF) >> 13;
+    get_flags_desc(ipv4_header.flags_desc, ntohs(ip->ip_off), verbose);
 
     // Time to live
     ipv4_header.time_to_live = ip->ip_ttl;
@@ -47,18 +47,18 @@ parse_ipv4(const u_char *packet, bool verbose)
     get_protocol_name(ipv4_header.protocol, ipv4_header.protocol_name, verbose);
 
     // Checksum
-    ipv4_header.checksum = ip->ip_sum;
+    ipv4_header.checksum = ntohs(ip->ip_sum);
     ip->ip_sum = 0;
 
     // Calculate the checksum
-    uint16_t calculated_checksum = calculate_checksum((uint16_t *)ip, ip->ip_hl * 4);
+    uint16_t calculated_checksum = ntohs(calculate_checksum((uint16_t *)ip, ip->ip_hl * 4));
     ipv4_header.checksum_correct = (ipv4_header.checksum == calculated_checksum);
     
     // Source and destination IP
     snprintf(ipv4_header.source_ipv4, 16, "%s", inet_ntoa(ip->ip_src));
     snprintf(ipv4_header.destination_ipv4, 16, "%s", inet_ntoa(ip->ip_dst));
 
-    return (my_ipv4_header_t){0};
+    return ipv4_header;
 }
 
 /**
@@ -102,34 +102,34 @@ calculate_checksum(uint16_t *packet, int count)
  * @param verbose 
  */
 void 
-get_flags_desc(char flags_desc[32], uint16_t ip_off, bool verbose)
+get_flags_desc(char flags_desc[FLAGS_DESC_SIZE], uint16_t ip_off, bool verbose)
 {
     if (verbose)
     {
         if (ip_off & IP_RF)
         {
-            snprintf(flags_desc, 32, "RF (Reserved)");
+            snprintf(flags_desc, FLAGS_DESC_SIZE, "RF (Reserved)");
         }
         if (ip_off & IP_DF)
         {
-            snprintf(flags_desc, 32, "DF (Don't Fragment)");
+            snprintf(flags_desc, FLAGS_DESC_SIZE, "DF (Don't Fragment)");
         }
         if (ip_off & IP_MF)
         {
-            snprintf(flags_desc, 32, "MF (More Fragments)");
+            snprintf(flags_desc, FLAGS_DESC_SIZE, "MF (More Fragments)");
         }
     } else {
         if (ip_off & IP_RF)
         {
-            snprintf(flags_desc, 32, "RF");
+            snprintf(flags_desc, FLAGS_DESC_SIZE, "RF");
         }
         if (ip_off & IP_DF)
         {
-            snprintf(flags_desc, 32, "DF");
+            snprintf(flags_desc, FLAGS_DESC_SIZE, "DF");
         }
         if (ip_off & IP_MF)
         {
-            snprintf(flags_desc, 32, "MF");
+            snprintf(flags_desc, FLAGS_DESC_SIZE, "MF");
         }
     }
 }
@@ -143,44 +143,44 @@ get_flags_desc(char flags_desc[32], uint16_t ip_off, bool verbose)
  * @param verbose 
  */
 void 
-get_protocol_name(uint8_t protocol, char protocol_name[16], bool verbose)
+get_protocol_name(uint8_t protocol, char protocol_name[PROTOCOL_NAME_SIZE], bool verbose)
 {
     // https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
     switch (protocol)
     {
         case IPPROTO_ICMP:
             if (verbose){
-                snprintf(protocol_name, 16, "ICMP (Internet Control Message Protocol)");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMP (Internet Control Message Protocol)");
             } else {
-                snprintf(protocol_name, 16, "ICMP");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMP");
             }
             break;
         case IPPROTO_IGMP:
             if (verbose){
-                snprintf(protocol_name, 16, "IGMP (Internet Group Management Protocol)");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "IGMP (Internet Group Management Protocol)");
             } else {
-                snprintf(protocol_name, 16, "IGMP");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "IGMP");
             }
             break;
         case IPPROTO_TCP:
             if (verbose){
-                snprintf(protocol_name, 16, "TCP (Transmission Control Protocol)");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "TCP (Transmission Control Protocol)");
             } else {
-                snprintf(protocol_name, 16, "TCP");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "TCP");
             }
             break;
         case IPPROTO_UDP:
             if (verbose){
-                snprintf(protocol_name, 16, "UDP (User Datagram Protocol)");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "UDP (User Datagram Protocol)");
             } else {
-                snprintf(protocol_name, 16, "UDP");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "UDP");
             }
             break;
         case IPPROTO_IPV6:
             if (verbose){
-                snprintf(protocol_name, 16, "IPv6 Encapsulated");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "IPv6 Encapsulated");
             } else {
-                snprintf(protocol_name, 16, "IPv6 Encap");
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "IPv6 Encap");
             }
             break;
     }
