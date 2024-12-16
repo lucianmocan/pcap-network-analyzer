@@ -54,6 +54,7 @@ typedef struct my_ipv4_header {
     char protocol_name[16];
 
     uint16_t checksum;
+    bool checksum_correct;
 
     char source_ipv4[16];
     char destination_ipv4[16];
@@ -61,5 +62,11 @@ typedef struct my_ipv4_header {
 } my_ipv4_header_t;
 
 my_ipv4_header_t parse_ipv4(const u_char *packet, bool verbose);
+
+// helpers
+void get_flags_desc(char flags_desc[32], uint16_t ip_off, bool verbose);
+void get_protocol_name(uint8_t protocol, char protocol_name[16], bool verbose);
+uint32_t calculate_checksum(uint16_t *packet, int length);
+
 
 #endif
