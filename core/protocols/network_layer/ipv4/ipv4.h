@@ -51,7 +51,7 @@ typedef struct my_ipv4_header {
     uint8_t time_to_live;
 
     uint8_t protocol;
-    char protocol_name[16];
+    char protocol_name[42];
 
     uint16_t checksum;
     bool checksum_correct;
