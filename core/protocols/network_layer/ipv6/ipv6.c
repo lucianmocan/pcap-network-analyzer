@@ -9,8 +9,8 @@
  * @return my_ipv6_header_t 
  */
 my_ipv6_header_t 
-parse_ipv6(const u_char *packet, bool verbose){
-
+parse_ipv6(const u_char *packet, bool verbose)
+{
     my_ipv6_header_t ipv6_header;
 
     struct ip6_hdr *ip6 = (struct ip6_hdr *)packet;

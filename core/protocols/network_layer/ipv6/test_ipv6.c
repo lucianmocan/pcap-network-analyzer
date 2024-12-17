@@ -1,8 +1,7 @@
 #include "ipv6.h"
 #include <assert.h>
 
-void
-test_parse_ipv6()
+void test_parse_ipv6()
 {
     uint8_t packet[40] = {
         0x62, 0x10, 0x01, 0x00,  
@@ -33,7 +32,8 @@ test_parse_ipv6()
     assert(strcmp(ipv6_header.destination_address, "2001:db8:85a3::8a2e:370:7335") == 0);
 }
 
-int main(){
+int main()
+{
     test_parse_ipv6();
     return 0;
 }
