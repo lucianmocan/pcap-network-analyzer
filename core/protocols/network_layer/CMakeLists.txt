@@ -15,6 +15,11 @@ add_library(arp
     arp/arp.h
 )
 
+add_library(icmp
+    icmp/icmp.c
+    icmp/icmp.h
+)
+
 add_executable(test_ipv4
     ipv4/test_ipv4.c
 )
@@ -37,6 +42,16 @@ add_executable(test_arp
 
 target_link_libraries(test_arp arp)
 add_test(NAME test_arp COMMAND test_arp)
+set_tests_properties(test_arp PROPERTIES DEPENDS test_mac_address)
+set_tests_properties(test_arp PROPERTIES DEPENDS test_ethernet)
+
+add_executable(test_icmp
+    icmp/test_icmp.c
+)
+
+target_link_libraries(test_icmp icmp)
+add_test(NAME test_icmp COMMAND test_icmp)
+set_tests_properties(test_icmp PROPERTIES DEPENDS test_ipv4)
 
 target_link_libraries(ipv4 PUBLIC mac_address dscp)
 target_include_directories(ipv4 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ipv4)
@@ -46,3 +61,6 @@ target_include_directories(ipv6 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ipv6)
 
 target_link_libraries(arp PUBLIC mac_address ethernet)
 target_include_directories(arp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/arp)
+
+target_link_libraries(icmp PUBLIC ipv4)
+target_include_directories(icmp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/icmp)
