@@ -34,7 +34,7 @@ Destination Unreachable Message
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 */
 
-#define ICMP_TYPE_DESC_SIZE 32
+#define ICMP_TYPE_DESC_SIZE 40
 #define ICMP_CODE_DESC_SIZE 90
 
 typedef struct my_icmp {
