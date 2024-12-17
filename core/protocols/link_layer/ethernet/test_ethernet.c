@@ -9,10 +9,11 @@ test_parse_ethernet()
         0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, // src mac
         0x08, 0x00 // type
     };
-    my_ethernet_header_t ethernet_frame = parse_ethernet(packet);
+    my_ethernet_header_t ethernet_frame = parse_ethernet(packet, true);
     assert(strcmp(ethernet_frame.src_mac, "66:77:88:99:aa:bb") == 0);
     assert(strcmp(ethernet_frame.dst_mac, "00:11:22:33:44:55") == 0);
     assert(ethernet_frame.type == 0x0800);
+    assert(strcmp(ethernet_frame.type_desc, "Type: IP (0x800)") == 0);
 }
 
 void
@@ -26,7 +27,7 @@ test_parse_ethernet_vlan()
         0x08, 0x00                          // Payload EtherType (IPv4)
     };
 
-    my_ethernet_header_t ethernet_frame = parse_ethernet(packet);
+    my_ethernet_header_t ethernet_frame = parse_ethernet(packet, true);
 
     assert(strcmp(ethernet_frame.src_mac, "66:77:88:99:aa:bb") == 0);
     assert(strcmp(ethernet_frame.dst_mac, "00:11:22:33:44:55") == 0);
@@ -36,7 +37,10 @@ test_parse_ethernet_vlan()
     assert(ethernet_frame.pcp == 0);       // PCP
     assert(ethernet_frame.dei == 0);       // DEI
 
-    assert(ethernet_frame.type == 0x0800); // IPv4
+    assert(ethernet_frame.type == 0x8100); // VLAN
+    assert(strcmp(ethernet_frame.type_desc, "Type: VLAN (0x8100)") == 0);
+    assert(ethernet_frame.type_vlan == 0x0800); // IPv4
+    assert(strcmp(ethernet_frame.type_desc_vlan, "Type: IP (0x800)") == 0);
 }
 
 int 
