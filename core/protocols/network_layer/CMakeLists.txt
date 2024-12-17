@@ -27,6 +27,7 @@ add_executable(test_ipv4
 target_link_libraries(test_ipv4 ipv4 dscp)
 add_test(NAME test_ipv4 COMMAND test_ipv4)
 set_tests_properties(test_ipv4 PROPERTIES DEPENDS test_dscp)
+set_tests_properties(test_ipv4 PROPERTIES DEPENDS test_check_sum)
 
 add_executable(test_ipv6
     ipv6/test_ipv6.c
@@ -53,7 +54,7 @@ target_link_libraries(test_icmp icmp)
 add_test(NAME test_icmp COMMAND test_icmp)
 set_tests_properties(test_icmp PROPERTIES DEPENDS test_ipv4)
 
-target_link_libraries(ipv4 PUBLIC mac_address dscp)
+target_link_libraries(ipv4 PUBLIC mac_address dscp check_sum)
 target_include_directories(ipv4 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ipv4)
 
 target_link_libraries(ipv6 PUBLIC dscp ipv4)

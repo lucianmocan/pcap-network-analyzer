@@ -11,6 +11,7 @@
 
 #include "mac_address.h"
 #include "dscp.h"
+#include "check_sum.h"
 
 #define FLAGS_DESC_SIZE 32
 #define PROTOCOL_NAME_SIZE 42
@@ -71,7 +72,6 @@ my_ipv4_header_t parse_ipv4(const uint8_t *packet, bool verbose);
 // helpers
 void get_flags_desc(char flags_desc[32], uint16_t ip_off, bool verbose);
 void ipv4_get_protocol_name(uint8_t protocol, char protocol_name[16], bool verbose);
-uint32_t calculate_checksum(uint16_t *packet, int length);
 
 
 #endif

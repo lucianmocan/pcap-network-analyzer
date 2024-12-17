@@ -2,22 +2,6 @@
 #include <assert.h>
 #include <arpa/inet.h>
 
-void test_calculate_checksum(){
-    u_int8_t packet[] = {
-        0x45, 0x00, 0x00, 0x73, 0x00, 0x00, 0x40, 0x00, 0x40, 0x11, 0xb8, 0x61,
-        0xc0, 0xa8, 0x00, 0x01, 0xc0, 0xa8, 0x00, 0xc7
-    };
-    
-    struct ip *ip = (struct ip*)packet;
-    int length = ip->ip_hl * 4;
-    uint16_t original_checksum = ip->ip_sum;
-    ip->ip_sum = 0;
-    
-    uint16_t checksum = calculate_checksum((uint16_t*)packet, length);
-    
-    assert(checksum == original_checksum);
-}
-
 void test_get_flags_desc(){
     uint16_t ip_off = 0x4000;
     char flags_desc[FLAGS_DESC_SIZE];
@@ -100,7 +84,6 @@ void test_parse_ipv4(){
 }
 
 int main(){
-    test_calculate_checksum();
     test_get_flags_desc();
     test_get_protocol_name();
     test_parse_ipv4();

@@ -6,7 +6,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include "ipv4.h"
+#include <stdlib.h>
+#include "check_sum.h"
 
 /* https://datatracker.ietf.org/doc/html/rfc792 
 Echo or Echo Reply Message [Page 14]
