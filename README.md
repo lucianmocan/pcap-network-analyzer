@@ -13,8 +13,8 @@ It provides:
 | **Protocol** | **Parser**         | **CLI**           | **Test Coverage** |
 |--------------|--------------------|-------------------|-------------------|
 | Ethernet     | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
-| IPv4         | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
-| IPv6         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| IPv4         | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
+| IPv6         | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | UDP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
 | TCP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
 | ICMP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
