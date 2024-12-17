@@ -3,7 +3,7 @@
 #include <arpa/inet.h>
 
 void test_calculate_checksum(){
-    u_char packet[] = {
+    u_int8_t packet[] = {
         0x45, 0x00, 0x00, 0x73, 0x00, 0x00, 0x40, 0x00, 0x40, 0x11, 0xb8, 0x61,
         0xc0, 0xa8, 0x00, 0x01, 0xc0, 0xa8, 0x00, 0xc7
     };
@@ -13,7 +13,7 @@ void test_calculate_checksum(){
     uint16_t original_checksum = ip->ip_sum;
     ip->ip_sum = 0;
     
-    uint16_t checksum = calculate_checksum((u_int16_t*)packet, length);
+    uint16_t checksum = calculate_checksum((uint16_t*)packet, length);
     
     assert(checksum == original_checksum);
 }
@@ -44,24 +44,24 @@ void test_get_flags_desc(){
 void test_get_protocol_name(){
     uint8_t protocol = 0x06;
     char protocol_name[PROTOCOL_NAME_SIZE];
-    get_protocol_name(protocol, protocol_name, true);
+    ipv4_get_protocol_name(protocol, protocol_name, true);
     assert(strcmp(protocol_name, "TCP (Transmission Control Protocol)") == 0);
     
     protocol = 0x11;
-    get_protocol_name(protocol, protocol_name, true);
+    ipv4_get_protocol_name(protocol, protocol_name, true);
     assert(strcmp(protocol_name, "UDP (User Datagram Protocol)") == 0);
     
     protocol = 0x01;
-    get_protocol_name(protocol, protocol_name, false);
+    ipv4_get_protocol_name(protocol, protocol_name, false);
     assert(strcmp(protocol_name, "ICMP") == 0);
     
     protocol = 0x02;
-    get_protocol_name(protocol, protocol_name, false);
+    ipv4_get_protocol_name(protocol, protocol_name, false);
     assert(strcmp(protocol_name, "IGMP") == 0);
 }
 
 void test_parse_ipv4(){
-    u_char packet[] = {
+    uint8_t packet[] = {
         0x45, 0x00, 0x00, 0x73, 0x00, 0x00, 0x40, 0x00, 0x40, 0x11, 0xb8, 0x61,
         0xc0, 0xa8, 0x00, 0x01, 0xc0, 0xa8, 0x00, 0xc7
     };

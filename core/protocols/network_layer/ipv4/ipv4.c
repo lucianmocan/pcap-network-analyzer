@@ -9,7 +9,7 @@
  * @return my_ipv4_header_t 
  */
 my_ipv4_header_t 
-parse_ipv4(const u_char *packet, bool verbose)
+parse_ipv4(const uint8_t *packet, bool verbose)
 {
     struct ip *ip;
     ip = (struct ip*)(packet);
@@ -44,14 +44,14 @@ parse_ipv4(const u_char *packet, bool verbose)
 
     // Protocol
     ipv4_header.protocol = ip->ip_p;
-    get_protocol_name(ipv4_header.protocol, ipv4_header.protocol_name, verbose);
+    ipv4_get_protocol_name(ipv4_header.protocol, ipv4_header.protocol_name, verbose);
 
     // Checksum
     ipv4_header.checksum = ntohs(ip->ip_sum);
     ip->ip_sum = 0;
 
     // Calculate the checksum
-    uint16_t calculated_checksum = ntohs(calculate_checksum((uint16_t *)ip, ip->ip_hl * 4));
+    uint16_t calculated_checksum = ntohs(calculate_checksum((uint16_t*)ip, ip->ip_hl * 4));
     ipv4_header.checksum_correct = (ipv4_header.checksum == calculated_checksum);
     
     // Source and destination IP
@@ -143,7 +143,7 @@ get_flags_desc(char flags_desc[FLAGS_DESC_SIZE], uint16_t ip_off, bool verbose)
  * @param verbose 
  */
 void 
-get_protocol_name(uint8_t protocol, char protocol_name[PROTOCOL_NAME_SIZE], bool verbose)
+ipv4_get_protocol_name(uint8_t protocol, char protocol_name[PROTOCOL_NAME_SIZE], bool verbose)
 {
     // https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
     switch (protocol)
