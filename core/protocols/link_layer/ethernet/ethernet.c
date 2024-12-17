@@ -99,7 +99,7 @@ get_ethertype_desc(uint16_t type, char *type_desc, bool verbose)
             if (verbose){
                 snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Type: Unknown (0x%x)", type);
             } else {
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "");
+                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Unknown");
             }
             break;
     }

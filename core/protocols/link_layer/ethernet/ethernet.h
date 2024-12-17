@@ -10,7 +10,7 @@
 
 #include "mac_address.h"
 
-#define MY_ETHER_TYPE_DESC_SIZE 20
+#define MY_ETHER_TYPE_DESC_SIZE 32
 #define MY_ETHER_ADDRESS_SIZE 18
 
 typedef struct my_ethernet_header {
