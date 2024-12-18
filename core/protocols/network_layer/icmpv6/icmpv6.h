@@ -13,6 +13,10 @@
 #define ICMPV6_CODE_DESC_SIZE 90
 #define MY_DEST_UNREACH_MINLEN 32 // 8 bytes 
 
+#ifdef __linux__
+#define ICMPV6_PLD_MAXLEN 1232
+#endif 
+
 /*
 Destination Unreachable Message
 https://datatracker.ietf.org/doc/html/rfc4443#section-3.1 [Page 8]

@@ -72,7 +72,6 @@ void test_parse_icmp_destination_unreachable()
     uint8_t packet[48] = {
         0x03, 0x01, 0xac, 0x96,  // Type (3), Code (1), Checksum (0x976c)
         0x00, 0x00, 0x00, 0x00,  // Unused field (4 bytes, must be zero)
-        // ignore the rest... I should implement this later
         0x45, 0x00, 0x00, 0x3c,  // Internet header (IP header)
         0x1c, 0x46, 0x40, 0x00,  
         0x40, 0x06, 0x9c, 0xbc,  
