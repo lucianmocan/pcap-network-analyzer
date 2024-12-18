@@ -12,6 +12,7 @@
 #include "ipv4.h"
 
 #define IPV6_ADDR_SIZE 128
+#define IPV6_INT8_ADDR_SIZE 16
 #define MY_IPV6_FLOW_ECN_MASK 0x00300000
 #define MY_IPV6_FLOW_ECN_SHIFT 20
 #define MY_IPV6_FLOWLABEL_MASK 0x000fffff
@@ -79,6 +80,9 @@ typedef struct my_ipv6_header {
     uint8_t hop_limit;
 
     // Source and destination IP addresses
+    uint8_t raw_source_address[IPV6_INT8_ADDR_SIZE];
+    uint8_t raw_destination_address[IPV6_INT8_ADDR_SIZE];
+    
     char source_address[IPV6_ADDR_SIZE];
     char destination_address[IPV6_ADDR_SIZE];
 } my_ipv6_header_t;

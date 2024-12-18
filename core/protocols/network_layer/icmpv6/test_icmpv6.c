@@ -1,0 +1,99 @@
+#include "icmpv6.h"
+#include <assert.h>
+#include <string.h>
+
+void test_parse_icmpv6_neighbor_solicit()
+{
+    uint8_t icmp6_packet[] = {
+    0x87, 0x00, 0x58, 0x2f, // Type (135), Code (0), Checksum (0x582f)
+    0x00, 0x00, 0x00, 0x00, // Reserved
+    0xfe, 0x80, 0x00, 0x00, // Destination Address (fe80::1470:453e:c74:6151)
+    0x00, 0x00, 0x00, 0x00, 
+    0x14, 0x70, 0x45, 0x3e, 
+    0x0c, 0x74, 0x61, 0x51,
+    0x01, 0x01, 0x5c, 0xe9, // Options (not implemented)
+    0x1e, 0x93, 0xd5, 0xa5
+    };
+
+    uint8_t ipv6_packet[] = {
+    0x60, 0x00, 0x00, 0x00, 
+    0x00, 0x20, 0x3A, 0xFF,
+    0xFE, 0x80, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00,
+    0x10, 0xD6, 0x8E, 0x22, 
+    0x07, 0x63, 0x03, 0xB7,
+    0xFF, 0x02, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x01, 
+    0xFF, 0x74, 0x61, 0x51
+    };
+    my_ipv6_header_t ipv6_header = parse_ipv6(ipv6_packet, false);
+
+    my_icmpv6_t icmpv6 = parse_icmpv6(icmp6_packet, sizeof(icmp6_packet), ipv6_header.raw_source_address, ipv6_header.raw_destination_address, false);
+    assert(icmpv6.type == ND_NEIGHBOR_SOLICIT);
+    assert(strcmp(icmpv6.icmpv6_type_desc, "Neighbor Solicitation") == 0);
+    assert(icmpv6.code == 0);
+    assert(strcmp(icmpv6.icmpv6_code_desc, "0") == 0);
+    assert(icmpv6.checksum == 0x582f);
+    assert(icmpv6.checksum_valid == true);
+    assert(strcmp((char*)icmpv6.payload, "fe80::1470:453e:c74:6151") == 0);
+}
+
+void test_parse_icmpv6_destination_unreachable(){
+    uint8_t icmp6_packet[] = {
+    0x01, 0x03, 0xD3, 0x9D, 
+    0x00, 0x00, 0x00, 0x00,
+    0x60, 0x09, 0x0E, 0x00, 
+    0x00, 0x0C, 0x11, 0x40,
+    0xFE, 0x80, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00,
+    0x10, 0xD6, 0x8E, 0x22, 
+    0x07, 0x63, 0x03, 0xB7,
+    0xFE, 0x80, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00,
+    0x14, 0x70, 0x45, 0x3E, 
+    0x0C, 0x74, 0x61, 0x51,
+    0x0E, 0x8A, 0x0E, 0x8A, 
+    0x00, 0x0C, 0x6E, 0xA5,
+    0x60, 0x1E, 0x00, 0x00
+    };
+
+    uint8_t ipv6_packet[] = {
+    0x60, 0x00, 0x00, 0x00, 
+    0x00, 0x3C, 0x3A, 0x40,
+    0xFE, 0x80, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00,
+    0x10, 0xD6, 0x8E, 0x22, 
+    0x07, 0x63, 0x03, 0xB7,
+    0xFE, 0x80, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00,
+    0x10, 0xD6, 0x8E, 0x22, 
+    0x07, 0x63, 0x03, 0xB7
+    };
+
+    my_ipv6_header_t ipv6_header = parse_ipv6(ipv6_packet, false);
+    my_icmpv6_t icmpv6 = parse_icmpv6(icmp6_packet, sizeof(icmp6_packet), ipv6_header.raw_source_address, ipv6_header.raw_destination_address, false);
+    assert(icmpv6.type == ICMP6_DST_UNREACH);
+    assert(strcmp(icmpv6.icmpv6_type_desc, "dest unreachable") == 0);
+    assert(icmpv6.code == 3);
+    assert(strcmp(icmpv6.icmpv6_code_desc, "addr unreachable") == 0);
+    assert(icmpv6.checksum == 0xD39D);
+    assert(icmpv6.checksum_valid == true);
+
+    assert(icmpv6.og_ipv6_header.version == 6);
+    assert(icmpv6.og_ipv6_header.traffic_class == 0);
+    assert(icmpv6.og_ipv6_header.payload_length == 12);
+    printf("%d\n", icmpv6.og_ipv6_header.next_header);
+    assert(icmpv6.og_ipv6_header.next_header == 17);
+    assert(strcmp(icmpv6.og_ipv6_header.next_header_name, "UDP") == 0);
+    assert(icmpv6.og_ipv6_header.hop_limit == 64);
+    assert(strcmp(icmpv6.og_ipv6_header.source_address, "fe80::10d6:8e22:763:3b7") == 0);
+    assert(strcmp(icmpv6.og_ipv6_header.destination_address, "fe80::1470:453e:c74:6151") == 0);
+}
+
+int main()
+{   
+    test_parse_icmpv6_destination_unreachable();
+    test_parse_icmpv6_neighbor_solicit();
+    return 0;
+}

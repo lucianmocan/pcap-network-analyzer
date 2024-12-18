@@ -34,6 +34,10 @@ parse_ipv6(const u_char *packet, bool verbose)
     
     ipv6_header.hop_limit = ip6->ip6_hlim;
 
+    // Copy the source and destination addresses
+    memcpy(ipv6_header.raw_source_address, ip6->ip6_src.s6_addr, IPV6_INT8_ADDR_SIZE);
+    memcpy(ipv6_header.raw_destination_address, ip6->ip6_dst.s6_addr, IPV6_INT8_ADDR_SIZE);
+
     inet_ntop(AF_INET6, &ip6->ip6_src, ipv6_header.source_address, IPV6_ADDR_SIZE);
     inet_ntop(AF_INET6, &ip6->ip6_dst, ipv6_header.destination_address, IPV6_ADDR_SIZE);
 
