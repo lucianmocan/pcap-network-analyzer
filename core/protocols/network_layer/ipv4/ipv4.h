@@ -62,6 +62,9 @@ typedef struct my_ipv4_header {
     uint16_t checksum;
     bool checksum_correct;
 
+    uint8_t raw_source_address[4];
+    uint8_t raw_destination_address[4];
+
     char source_ipv4[IP_ADDR_SIZE];
     char destination_ipv4[IP_ADDR_SIZE];
 
@@ -72,6 +75,7 @@ my_ipv4_header_t parse_ipv4(const uint8_t *packet, bool verbose);
 // helpers
 void get_flags_desc(char flags_desc[32], uint16_t ip_off, bool verbose);
 void ipv4_get_protocol_name(uint8_t protocol, char protocol_name[16], bool verbose);
+uint16_t* build_ipv4_pseudo_header_and_packet(uint8_t *packet, int packet_len, uint8_t *src_ip, uint8_t *dst_ip, uint8_t net_protocol, int *combined_len);
 
 
 #endif

@@ -20,7 +20,7 @@ my_icmpv6_t parse_icmpv6(const uint8_t *packet, size_t packet_length, uint8_t *s
 
     // Build the pseudo-header and packet
     int combined_len;
-    uint16_t *combined = build_icmpv6_pseudo_header_and_packet((uint8_t*)icmp6_hdr, packet_length, src_ipv6, dst_ipv6, next_header, &combined_len);
+    uint16_t *combined = build_ipv6_pseudo_header_and_packet((uint8_t*)icmp6_hdr, packet_length, src_ipv6, dst_ipv6, next_header, &combined_len);
     uint16_t calculated_checksum = ntohs(calculate_checksum(combined, combined_len));
     my_icmpv6.checksum_valid = (calculated_checksum == my_icmpv6.checksum);
 
@@ -91,70 +91,6 @@ free_parse_icmpv6(my_icmpv6_t *my_icmpv6)
     if (my_icmpv6->payload != NULL){
         free(my_icmpv6->payload);
     }
-}
-
-
-/**
- * @brief Build the pseudo-header and combine it with the packet
- * https://datatracker.ietf.org/doc/html/rfc2460#section-8.1
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                                                               |
-   +                                                               +
-   |                                                               |
-   +                         Source Address                        +
-   |                                                               |
-   +                                                               +
-   |                                                               |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                                                               |
-   +                                                               +
-   |                                                               |
-   +                      Destination Address                      +
-   |                                                               |
-   +                                                               +
-   |                                                               |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                   Upper-Layer Packet Length                   |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                      zero                     |  Next Header  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- * @param packet 
- * @param packet_len 
- * @param src_ip 
- * @param dst_ip 
- * @param next_header 
- * @param combined_len 
- * @return uint16_t* 
- */
-uint16_t* build_icmpv6_pseudo_header_and_packet(uint8_t *packet, int packet_len, uint8_t *src_ip, uint8_t *dst_ip, uint8_t next_header, int *combined_len)
-{   
-    // Check sum is different from ICMP because ICMPv6 has to include the pseudo-header of IPv6
-    // Create the pseudo-header
-    uint8_t pseudo_header[40];
-    memcpy(pseudo_header, src_ip, 16);
-    memcpy(pseudo_header + 16, dst_ip, 16);
-    pseudo_header[32] = (packet_len >> 24) & 0xFF;
-    pseudo_header[33] = (packet_len >> 16) & 0xFF;
-    pseudo_header[34] = (packet_len >> 8) & 0xFF;
-    pseudo_header[35] = packet_len & 0xFF;
-    pseudo_header[36] = 0;
-    pseudo_header[37] = 0;
-    pseudo_header[38] = 0;
-    pseudo_header[39] = next_header;
-
-    // Combine the pseudo-header and the packet
-    *combined_len = 40 + packet_len;
-    uint16_t *combined = (uint16_t*)malloc(*combined_len + (*combined_len % 2));
-    memcpy(combined, pseudo_header, 40);
-    memcpy((uint8_t*)combined + 40, packet, packet_len);
-
-    // Make sure the combined length is even, add padding if necessary
-    if (*combined_len % 2 == 1) {
-        ((uint8_t*)combined)[*combined_len] = 0;
-        (*combined_len)++;
-    }
-
-    return combined;
 }
 
 /**

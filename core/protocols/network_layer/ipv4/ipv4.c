@@ -54,11 +54,63 @@ parse_ipv4(const uint8_t *packet, bool verbose)
     uint16_t calculated_checksum = ntohs(calculate_checksum((uint16_t*)ip, ip->ip_hl * 4));
     ipv4_header.checksum_correct = (ipv4_header.checksum == calculated_checksum);
     
+    // Raw source and destination addresses
+    memcpy(ipv4_header.raw_source_address, &ip->ip_src, 4);
+    memcpy(ipv4_header.raw_destination_address, &ip->ip_dst, 4);
+
     // Source and destination IP
     snprintf(ipv4_header.source_ipv4, 16, "%s", inet_ntoa(ip->ip_src));
     snprintf(ipv4_header.destination_ipv4, 16, "%s", inet_ntoa(ip->ip_dst));
 
     return ipv4_header;
+}
+
+/**
+ * @brief 
+ * 
+ * the "pseudo-header" for IPv4 : https://datatracker.ietf.org/doc/html/rfc768
+ * 
+ *       0      7 8     15 16    23 24    31
+ *       +--------+--------+--------+--------+
+ *       |          source address           |
+ *       +--------+--------+--------+--------+
+ *       |        destination address        |
+ *       +--------+--------+--------+--------+
+ *       |  zero  |protocol|   UDP length    |
+ *       +--------+--------+--------+--------+
+ * 
+ * @param packet 
+ * @param packet_len 
+ * @param src_ip 
+ * @param dst_ip 
+ * @param net_protocol 
+ * @param combined_len 
+ * @return uint16_t* 
+ */
+uint16_t* 
+build_ipv4_pseudo_header_and_packet(uint8_t *packet, int packet_length, uint8_t *src_add, uint8_t *dst_add, uint8_t net_protocol, int *combined_len)
+{
+    uint8_t pseudo_header[12];
+    memcpy(pseudo_header, src_add, 4);
+    memcpy(pseudo_header + 4, dst_add, 4);
+    pseudo_header[8] = 0;
+    pseudo_header[9] = net_protocol;
+    pseudo_header[10] = (packet_length >> 8) & 0xFF;
+    pseudo_header[11] = packet_length & 0xFF;
+
+    // Combine the pseudo-header and the packet
+    *combined_len = 12 + packet_length;
+    uint16_t *combined = (uint16_t*)malloc(*combined_len + (*combined_len % 2));
+    memcpy(combined, pseudo_header, 12);
+    memcpy((uint8_t*)combined + 12, packet, packet_length);
+
+    // Make sure the combined length is even, add padding if necessary
+    if (*combined_len % 2 == 1) {
+        ((uint8_t*)combined)[*combined_len] = 0;
+        (*combined_len)++;
+    }
+
+    return combined;
 }
 
 

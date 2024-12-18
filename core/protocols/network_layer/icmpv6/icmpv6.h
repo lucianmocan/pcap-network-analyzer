@@ -90,7 +90,6 @@ typedef struct my_icmpv6 {
 
 my_icmpv6_t parse_icmpv6(const uint8_t *packet, size_t packet_length, uint8_t *src_ipv6, uint8_t *dst_ipv6, bool verbose);
 // helpers
-uint16_t* build_icmpv6_pseudo_header_and_packet(uint8_t *packet, int packet_len, uint8_t *src_ip, uint8_t *dst_ip, uint8_t next_header, int *combined_len);
 void get_icmpv6_type_desc(uint8_t type, char *desc, bool verbose);
 void get_icmpv6_code_desc(uint8_t type, uint8_t code, char *desc, bool verbose);
 

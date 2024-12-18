@@ -88,5 +88,6 @@ typedef struct my_ipv6_header {
 } my_ipv6_header_t;
 
 my_ipv6_header_t parse_ipv6(const u_int8_t *packet, bool verbose);
+uint16_t* build_ipv6_pseudo_header_and_packet(uint8_t *packet, int packet_length, uint8_t *src_ip, uint8_t *dst_ip, uint8_t next_header, int *combined_len);
 
 #endif
