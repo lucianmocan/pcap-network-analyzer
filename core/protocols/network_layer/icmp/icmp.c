@@ -44,15 +44,30 @@ parse_icmp(const uint8_t *packet, size_t packet_length, const bool verbose)
 
     // if there's more than the header, then copy the data
     if (packet_length > ICMP_MINLEN && (icmp_p.type == ICMP_ECHO || icmp_p.type == ICMP_ECHOREPLY)){
-        icmp_p.data = malloc(packet_length - ICMP_MINLEN + 1);
-        if (icmp_p.data == NULL){
+        icmp_p.payload = malloc(packet_length - ICMP_MINLEN + 1);
+        if (icmp_p.payload == NULL){
             perror("malloc");
             exit(EXIT_FAILURE);
         }
 
-        snprintf((char *)icmp_p.data, packet_length - ICMP_MINLEN + 1, "%s", icmp->icmp_data);
+        memcpy(icmp_p.payload, icmp->icmp_data, packet_length - ICMP_MINLEN);
+    } else if (icmp_p.type == ICMP_UNREACH){
+        // get the original ip header
+        icmp_p.og_ip_header = parse_ipv4(packet + ICMP_MINLEN, verbose);
+        // 64 bits
+        icmp_p.payload = malloc(8 * sizeof(uint8_t));
+        if (icmp_p.payload == NULL){
+            perror("malloc");
+            exit(EXIT_FAILURE);
+        }
+        memcpy(icmp_p.payload, packet + ICMP_MINLEN + icmp_p.og_ip_header.header_length * 4, 8);
+        if (icmp_p.og_ip_header.protocol == IPPROTO_TCP){
+            // my_tcp_header_t tcp_header = parse_tcp(packet + ICMP_MINLEN + icmp_p.original_ip_header.header_length * 4, verbose);
+        } else if (icmp_p.og_ip_header.protocol == IPPROTO_UDP){
+            // my_udp_header_t udp_header = parse_udp(packet + ICMP_MINLEN + icmp_p.original_ip_header.header_length * 4, verbose);
+        }
     } else {
-        icmp_p.data = NULL;
+        icmp_p.payload = NULL;
     }
 
     return icmp_p;

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "check_sum.h"
+#include "ipv4.h"
 
 /* https://datatracker.ietf.org/doc/html/rfc792 
 Echo or Echo Reply Message [Page 14]
@@ -50,10 +51,9 @@ typedef struct my_icmp {
 
     uint16_t identifier;
     uint16_t sequence_number;
-    uint8_t *data; // this is reserved for the ICMP payload
-
+    uint8_t *payload; // this is reserved for the ICMP payload
+    my_ipv4_header_t og_ip_header;
     // Internet Header + 64 bits of Original Data Datagram
-    // TODO: I need to implement this later
 } my_icmp_t;
 
 my_icmp_t parse_icmp(const uint8_t *packet, size_t packet_length, bool verbose);
