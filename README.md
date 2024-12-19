@@ -20,8 +20,8 @@ It provides:
 | ICMP         | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | ARP          | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | ICMPv6       | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
-| BOOTP        | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
-| DHCP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| BOOTP        | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
+| DHCP         | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | DNS          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
 | HTTP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
 | FTP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
