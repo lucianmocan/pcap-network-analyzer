@@ -42,7 +42,7 @@
 #define DHCPRELEASE 7
 
 #define BP_OP_DESC_SIZE 32
-#define MY_DHCP_OPTION_DESC_SIZE 32
+#define MY_DHCP_OPTION_DESC_SIZE 40
 #define MY_DHCP_OPTIONS_DESC_SIZE 256
 
 typedef struct my_dhcp_option {
