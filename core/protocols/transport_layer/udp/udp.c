@@ -1,5 +1,15 @@
 #include "udp.h"
 
+/**
+ * @brief Parse the udp header and check if the checksum is correct
+ * 
+ * @param packet 
+ * @param src_add 
+ * @param dst_add 
+ * @param net_protocol 
+ * @param verbose 
+ * @return my_udp_header_t 
+ */
 my_udp_header_t 
 parse_udp(const uint8_t *packet, uint8_t *src_add, uint8_t *dst_add, uint8_t net_protocol, bool verbose)
 {   

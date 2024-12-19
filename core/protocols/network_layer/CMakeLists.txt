@@ -38,7 +38,7 @@ add_executable(test_ipv6
     ipv6/test_ipv6.c
 )
 
-target_link_libraries(test_ipv6 ipv6 dscp)
+target_link_libraries(test_ipv6 ipv6)
 add_test(NAME test_ipv6 COMMAND test_ipv6)
 set_tests_properties(test_ipv6 PROPERTIES DEPENDS test_dscp)
 

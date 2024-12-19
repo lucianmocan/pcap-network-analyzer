@@ -76,7 +76,7 @@ parse_ipv4(const uint8_t *packet, bool verbose)
  *       +--------+--------+--------+--------+
  *       |        destination address        |
  *       +--------+--------+--------+--------+
- *       |  zero  |protocol|   UDP length    |
+ *       |  zero  |protocol| UDP/TCP length  |
  *       +--------+--------+--------+--------+
  * 
  * @param packet 
