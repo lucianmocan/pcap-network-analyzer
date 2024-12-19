@@ -206,7 +206,7 @@ get_dhcp_options_desc(uint8_t *options, my_dhcp_bootp_header_t* bootp_header, bo
             case DHCP_PARAMETER_REQUEST_LIST:
                 snprintf(dhcp_option->option_code_desc, MY_DHCP_OPTION_DESC_SIZE, "Parameter Request List (%d)", options[write_ptr]);
                 for (int i = 0; i < dhcp_option->option_length; i++){
-                    snprintf(dhcp_option->option_value_desc + i * 3, 4, "%d,", options[write_ptr + 2 + i]);
+                    snprintf(dhcp_option->option_value_desc + i * 3, dhcp_option->option_length * 2, "%d,", options[write_ptr + 2 + i]);
                 }
                 break;
             case DHCP_CLIENT_IDENTIFIER:
