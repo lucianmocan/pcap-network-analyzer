@@ -15,11 +15,11 @@ It provides:
 | Ethernet     | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | IPv4         | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | IPv6         | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
-| UDP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
-| TCP          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| UDP          | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
+| TCP          | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | ICMP         | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | ARP          | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
-| ICMPv6       | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
+| ICMPv6       | <ul><li>[x]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[x]&nbsp;</li></ul> |
 | BOOTP        | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
 | DHCP         | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
 | DNS          | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> | <ul><li>[ ]&nbsp;</li></ul> |
