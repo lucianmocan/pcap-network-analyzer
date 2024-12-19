@@ -152,7 +152,7 @@ get_tcp_flags_desc(uint8_t flags, char *desc, bool verbose)
     if (verbose)
     {   
         int write_ptr = strlen("Flags: ");
-        snprintf(desc, write_ptr, "Flags: ");
+        memcpy(desc, "Flags: ", write_ptr);
         if (flags & TH_FIN){
             snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "FIN ");
             write_ptr += strlen("FIN ");

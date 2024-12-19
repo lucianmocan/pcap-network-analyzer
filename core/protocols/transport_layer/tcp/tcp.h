@@ -38,7 +38,7 @@
 */
 
 #define MY_TCP_FLAGS_DESC_SIZE 40
-#define MY_TCP_OPTIONS_DESC_SIZE 64
+#define MY_TCP_OPTIONS_DESC_SIZE 192
 
 typedef struct my_tcp_header {
     uint16_t source_port;
