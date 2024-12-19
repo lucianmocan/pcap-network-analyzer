@@ -67,6 +67,7 @@ void test_parse_bootp()
     // {
     //     printf("%x ", bootp_header.vendor_specific_area[i]);
     // }
+    free_dhcp_bootp_header(&bootp_header);
 }
 
 void test_parse_dhcp()
@@ -142,6 +143,8 @@ void test_parse_dhcp()
     //     i++;
     // }
     // printf("Number of options: %d\n", i);
+
+    free_dhcp_bootp_header(&dhcp_header);
 }
 
 int main()

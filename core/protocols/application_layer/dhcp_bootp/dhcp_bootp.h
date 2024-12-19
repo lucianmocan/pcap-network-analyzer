@@ -89,6 +89,7 @@ typedef struct my_dhcp_bootp_header {
 } my_dhcp_bootp_header_t;
 
 my_dhcp_bootp_header_t parse_bootp(uint8_t *packet, bool verbose);
+void free_dhcp_bootp_header(my_dhcp_bootp_header_t *bootp_header);
 
 // helpers
 void get_dhcp_message_type_desc(uint8_t message_type, char *desc, bool verbose);

@@ -70,6 +70,17 @@ parse_bootp(uint8_t *packet, bool verbose)
 }
 
 /**
+ * @brief Free the DHCP allocated linked list
+ * 
+ * @param bootp_header 
+ */
+void 
+free_dhcp_bootp_header(my_dhcp_bootp_header_t *bootp_header)
+{
+    free_list(bootp_header->dhcp_options);
+}
+
+/**
  * @brief Get the dhcp message type description in a given string
  * 
  * @param message_type 
