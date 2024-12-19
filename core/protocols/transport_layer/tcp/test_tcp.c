@@ -78,7 +78,7 @@ void test_parse_tcp_ipv6()
     assert(tcp.checksum == 0x17c5);
     assert(tcp.checksum_correct == true);
     assert(tcp.urgent_pointer == 0);
-    assert(strncmp(tcp.tcp_options_desc, "mss (16324)", 11) == 0);
+    assert(strncmp(tcp.tcp_options_desc, "| mss (16324) | no-op | ? op | no-op | no-op | ? op | ? op | eopl | eopl", 72) == 0);
 }
 
 int main()
