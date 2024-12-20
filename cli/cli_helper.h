@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include "interface.h"
+#include <time.h>
 
 #include <pcap.h>
 #include <arpa/inet.h>
