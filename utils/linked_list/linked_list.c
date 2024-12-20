@@ -41,6 +41,31 @@ add_node(node_t *head, void *data)
 }
 
 /**
+ * @brief Add a node to the end of a linked list or NULL head
+ * 
+ * @param head 
+ * @param data 
+ * @return node_t* 
+ */
+node_t*
+add_node_end(node_t *head, void *data)
+{
+    node_t *new_node = create_node(data);
+    if (new_node == NULL){
+        return NULL;
+    }
+    if (head == NULL){
+        return new_node;
+    }
+    node_t *current = head;
+    while (current->next != NULL){
+        current = current->next;
+    }
+    current->next = new_node;
+    return head;
+}
+
+/**
  * @brief Remove a node from a linked list (pop)
  * 
  * @param head 
