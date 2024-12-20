@@ -7,10 +7,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <ctype.h>
 
 #include "linked_list.h"
 
-#define DNS_NAME_MAX_SIZE 255
+#define DNS_NAME_MAX_SIZE 1024
 #define DNS_LABEL_MAX_SIZE 63
 #define DNS_DESC_SIZE 64
 
@@ -81,6 +82,7 @@ https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.1
 #define QR_DESC_SIZE 42
 #define OPCODE_DESC_SIZE 40
 #define RCODE_DESC_SIZE 40
+#define RDATA_MAX_SIZE 512
 
 // QR values
 #define QR_QUERY 0
@@ -110,11 +112,17 @@ https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.1
 #define TYPE_MINFO 14        // mailbox or mail list information
 #define TYPE_MX 15           // mail exchange
 #define TYPE_TXT 16          // text strings
+#define TYPE_HTTPS 65       // HTTPS
 
 // CLASS/QCLASS values
 #define CLASS_IN 1     // the Internet
 #define CLASS_CH 3     // the Chaos class
 #define CLASS_HS 4     // Hesiod [Dyer 87]
+
+// 
+#define IS_ANSWER 0
+#define IS_AUTHORITY 1
+#define IS_ADDITIONAL 2
 
 typedef struct question_section {
     char qname[DNS_NAME_MAX_SIZE];   // a domain name represented as a sequence of labels, where each label consists of a length octet followed by that number of octets.
@@ -125,14 +133,15 @@ typedef struct question_section {
 } question_section_t;
 
 typedef struct resource_record {
-    node_t* name;    // a domain name to which this resource record pertains.
+    char name[DNS_NAME_MAX_SIZE];    // a domain name to which this resource record pertains.
     uint16_t type;   // two octets containing one of the RR type codes.
     char type_desc[DNS_DESC_SIZE];
     uint16_t class;  // two octets which specify the class of the data in the RDATA field.
     char class_desc[DNS_DESC_SIZE];
     uint32_t ttl;    
     uint16_t rdlength; // the length in octets of the RDATA field.
-    uint16_t* rdata;  
+    uint8_t* rdata; 
+    char rdata_desc[RDATA_MAX_SIZE]; 
 } resource_record_t;
 
 typedef struct my_dns_header {
@@ -175,13 +184,13 @@ typedef struct my_dns_header {
     uint16_t arcount; // the number of resource records in the additional records section.
 
     node_t* question_section;
-    resource_record_t* answer_section;
-    resource_record_t* authority_section;
-    resource_record_t* additional_section;
+    node_t* answer_section;
+    node_t* authority_section;
+    node_t* additional_section;
 
 } my_dns_header_t;
 
-my_dns_header_t parse_dns(const uint8_t *packet, bool verbose);
+my_dns_header_t parse_dns(uint8_t *packet, bool verbose);
 void free_dns_header(my_dns_header_t *dns_header);
 // helpers
 // void get_dns_name(const uint8_t *packet, my_dns_header_t *dns_header);
@@ -195,10 +204,13 @@ void get_opcode_desc(uint8_t opcode, char *desc, bool verbose);
 void get_qr_desc(uint8_t qr, char *desc, bool verbose);
 void get_class_desc(uint16_t class, char *desc, bool verbose);
 void get_type_desc(uint16_t type, char *desc, bool verbose);
+void process_rdata(uint8_t *rdata, char* desc, size_t rdata_length);
 
-int get_dns_qname(const uint8_t *packet, question_section_t *question_section);
-void get_dns_question(const uint8_t *packet, my_dns_header_t *dns_header, bool verbose);
-void get_dns_answer(const uint8_t *packet, my_dns_header_t *dns_header);
-void get_dns_authority(const uint8_t *packet, my_dns_header_t *dns_header);
-void get_dns_additional(const uint8_t *packet, my_dns_header_t *dns_header);
+int get_dns_name(uint8_t *packet, resource_record_t *resource_record);
+int get_dns_qname(uint8_t *packet, question_section_t *question_section);
+int get_dns_question(uint8_t *packet, my_dns_header_t *dns_header, bool verbose);
+int get_dns_resource_record(uint8_t *packet, uint8_t *packet_init, my_dns_header_t *dns_header, int count, int dest, int advance, bool verbose);
+int get_dns_answer(uint8_t *packet, uint8_t *packet_init, my_dns_header_t *dns_header, int advance, bool verbose);
+int get_dns_authority(uint8_t *packet, uint8_t *packet_init, my_dns_header_t *dns_header, int advance, bool verbose);
+int get_dns_additional(uint8_t *packet, uint8_t *packet_init, my_dns_header_t *dns_header, int advance, bool verbose);
 #endif

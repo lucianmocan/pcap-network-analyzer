@@ -3,9 +3,10 @@
 
 
 my_dns_header_t 
-parse_dns(const uint8_t *packet, bool verbose)
+parse_dns(uint8_t *packet, bool verbose)
 {
     my_dns_header_t dns_header;
+    uint8_t *packet_init = (uint8_t*)packet;
     dns_header.transaction_id = ntohs(*(uint16_t*)packet);
     packet += 2;
     dns_header.qr = (*packet & 0x80) >> 7;
@@ -43,20 +44,25 @@ parse_dns(const uint8_t *packet, bool verbose)
     dns_header.authority_section = NULL;
     dns_header.additional_section = NULL;
 
+    int advance = 0;
     if (dns_header.qdcount > 0){
-        get_dns_question(packet, &dns_header, verbose);
+        int step = get_dns_question(packet, &dns_header, verbose);
+        advance += step;
     }
 
     if (dns_header.ancount > 0){
-        get_dns_answer(packet, &dns_header);
+        int step = get_dns_answer(packet, packet_init, &dns_header, advance, verbose);
+        advance += step;
     }
 
     if (dns_header.nscount > 0){
-        get_dns_authority(packet, &dns_header);
+        int step = get_dns_authority(packet, packet_init, &dns_header, advance, verbose);
+        advance += step;
     }
 
     if (dns_header.arcount > 0){
-        get_dns_additional(packet, &dns_header);
+        int step = get_dns_additional(packet, packet_init, &dns_header, advance, verbose);
+        advance += step;
     }
 
     return dns_header;
@@ -65,24 +71,163 @@ parse_dns(const uint8_t *packet, bool verbose)
 void
 free_dns_header(my_dns_header_t *dns_header)
 {
-    // free_list(dns_header->name);
+    free_list(dns_header->question_section);
+    free_list(dns_header->answer_section);
+    free_list(dns_header->authority_section);
+    free_list(dns_header->additional_section);
 }
 
-void get_dns_answer(const uint8_t *packet, my_dns_header_t *dns_header){
-
+/**
+ * @brief Get the dns answer stuff
+ * 
+ * @param packet 
+ * @param packet_init 
+ * @param dns_header 
+ * @param advance 
+ * @param verbose 
+ * @return int 
+ */
+int get_dns_answer(uint8_t *packet, uint8_t *packet_init, my_dns_header_t *dns_header, int advance, bool verbose){
+    return get_dns_resource_record(packet, packet_init, dns_header, dns_header->ancount, IS_ANSWER, advance, verbose);
 }
-void get_dns_authority(const uint8_t *packet, my_dns_header_t *dns_header){
 
+/**
+ * @brief Get the dns authority stuff
+ * 
+ * @param packet 
+ * @param packet_init 
+ * @param dns_header 
+ * @param advance 
+ * @param verbose 
+ * @return int 
+ */
+int get_dns_authority(uint8_t *packet, uint8_t *packet_init, my_dns_header_t *dns_header, int advance, bool verbose){
+    return get_dns_resource_record(packet, packet_init, dns_header, dns_header->nscount, IS_AUTHORITY, advance, verbose);
 }
-void get_dns_additional(const uint8_t *packet, my_dns_header_t *dns_header){
 
+/**
+ * @brief Get the dns additional stuff
+ * 
+ * @param packet 
+ * @param packet_init 
+ * @param dns_header 
+ * @param advance 
+ * @param verbose 
+ * @return int 
+ */
+int get_dns_additional(uint8_t *packet, uint8_t *packet_init, my_dns_header_t *dns_header, int advance, bool verbose){
+    return get_dns_resource_record(packet, packet_init, dns_header, dns_header->arcount, IS_ADDITIONAL, advance, verbose);
 }
 
+/**
+ * @brief Get the dns resource record object
+ * 
+ * @param packet 
+ * @param packet_init 
+ * @param dns_header 
+ * @param count 
+ * @param what 
+ * @param advance 
+ * @param verbose 
+ * @return int 
+ */
+int
+get_dns_resource_record(uint8_t *packet, uint8_t* packet_init, my_dns_header_t *dns_header, int count, int what, int advance, bool verbose)
+{   
+    node_t **dest;
+    switch(what){
+        case IS_ANSWER:
+            dest = &dns_header->answer_section;
+            break;
+        case IS_AUTHORITY:
+            dest = &dns_header->authority_section;
+            break;
+        case IS_ADDITIONAL:
+            dest = &dns_header->additional_section;
+            break;
+        default:
+            fprintf(stderr, "Invalid resource record type\n");
+            exit(EXIT_FAILURE);
+    }
+    int next = 0;
+    uint8_t *packet_current = packet + advance;
+    while(count > 0){
+        resource_record_t *resource_record = malloc(sizeof(resource_record_t));
+        if (resource_record == NULL){
+            fprintf(stderr, "Failed to allocate memory for resource record\n");
+            exit(EXIT_FAILURE);
+        }
+        if ((packet_current[0] & 0xC0) == 0xC0){
+            size_t offset = ((packet_current[0] & 0x3F) << 8) | packet_current[1];
+            int qname_size = get_dns_name(packet_init + offset, resource_record);
+            // skip pointer
+            packet_current += 2;
+            next += 2;
+        } else {
+            int qname_size = get_dns_name(packet_current, resource_record);
+            packet_current += qname_size;
+            next += qname_size;
+        }
+        resource_record->type = ntohs(*(uint16_t*)packet_current);
+        get_type_desc(resource_record->type, resource_record->type_desc, verbose);
+        packet_current += 2;
+        next += 2;
 
-void 
-get_dns_question(const uint8_t *packet, my_dns_header_t *dns_header, bool verbose)
+        resource_record->class = ntohs(*(uint16_t*)packet_current);
+        get_class_desc(resource_record->class, resource_record->class_desc, verbose);
+        packet_current += 2;
+        next += 2;
+
+        resource_record->ttl = ntohl(*(uint32_t*)packet_current);
+        packet_current += 4;
+        next += 4;
+
+        resource_record->rdlength = ntohs(*(uint16_t*)packet_current);
+        packet_current += 2;
+        next += 2;
+
+        resource_record->rdata = malloc(resource_record->rdlength);
+        if (resource_record->rdata == NULL){
+            fprintf(stderr, "Failed to allocate memory for rdata\n");
+            exit(EXIT_FAILURE);
+        }
+        memcpy(resource_record->rdata, packet_current, resource_record->rdlength);
+        process_rdata((uint8_t*)resource_record->rdata, resource_record->rdata_desc, resource_record->rdlength);
+        packet_current += resource_record->rdlength;
+        next += resource_record->rdlength;
+
+        *dest = add_node_end(*dest, (void*)resource_record);
+        count--;
+    }
+    return next;
+}
+
+/**
+ * @brief Get rdata into string representation
+ * 
+ * @param rdata 
+ * @param desc 
+ * @param rdata_length 
+ */
+void
+process_rdata(uint8_t *rdata, char* desc, size_t rdata_length)
+{
+    desc[rdata_length] = '\0';
+    for (int i = 0; i < rdata_length; i++){
+        if (isprint(rdata[i])){
+            desc[i] = rdata[i];
+        } else {
+            desc[i] = '.';
+        }
+    }
+}
+
+int 
+get_dns_question(uint8_t *packet, my_dns_header_t *dns_header, bool verbose)
 {
     int count = dns_header->qdcount;
+    // keep the counter in the packet for the others
+    int next = 0;
     while(count > 0){
         question_section_t *question_section = malloc(sizeof(question_section_t));
         if (question_section == NULL){
@@ -90,16 +235,20 @@ get_dns_question(const uint8_t *packet, my_dns_header_t *dns_header, bool verbos
             exit(EXIT_FAILURE);
         }
         int qname_size = get_dns_qname(packet, question_section);
+        next += qname_size;
         packet += qname_size;
         question_section->qtype = ntohs(*(uint16_t*)packet);
         get_type_desc(question_section->qtype, question_section->qtype_desc, verbose);
         packet += 2;
+        next += 2;
         question_section->qclass = ntohs(*(uint16_t*)packet);
         get_class_desc(question_section->qclass, question_section->qclass_desc, verbose);
         packet += 2;
+        next += 2;
         dns_header->question_section = add_node_end(dns_header->question_section, (void*)question_section);
         count--;
     }
+    return next;
 }
 
 /**
@@ -217,6 +366,13 @@ get_type_desc(uint16_t type, char *desc, bool verbose)
                 snprintf(desc, DNS_DESC_SIZE, "TXT");
             }
             break;
+        case TYPE_HTTPS:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "HTTPS (%d) Specific Service Endpoints", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "HTTPS");
+            }
+            break;
         default:
             if (verbose){
                 snprintf(desc, DNS_DESC_SIZE, "qtype: Unknown (%d)", type);
@@ -235,11 +391,11 @@ get_type_desc(uint16_t type, char *desc, bool verbose)
  * @return int 
  */
 int
-get_dns_qname(const uint8_t *packet, question_section_t *question_section)
+get_dns_qname(uint8_t *packet, question_section_t *question_section)
 {
     int i = 0;
     int offset = 0;
-    char qname[DNS_LABEL_MAX_SIZE]; // at max 255 so we're good
+    char qname[DNS_NAME_MAX_SIZE]; // at max 255 so we're good
     while (packet[i] != 0){
         int label_length = packet[i];
         if (offset + label_length >= sizeof(qname)){
@@ -253,6 +409,35 @@ get_dns_qname(const uint8_t *packet, question_section_t *question_section)
     }
     qname[offset - 1] = '\0'; // Replace last dot with null terminator
     snprintf(question_section->qname, sizeof(question_section->qname), "%s", qname);
+    return i + 1;
+}
+
+/**
+ * @brief Get the dns qnames in a string and return the number of bytes read
+ * 
+ * @param packet 
+ * @param question_section 
+ * @return int 
+ */
+int
+get_dns_name(uint8_t *packet, resource_record_t *resource_record)
+{
+    int i = 0;
+    int offset = 0;
+    char name[DNS_NAME_MAX_SIZE]; // at max 255 so we're good
+    while (packet[i] != 0){
+        int label_length = packet[i];
+        if (offset + label_length >= sizeof(name)){
+            fprintf(stderr, "Name exceeds maximum allowed size\n");
+            exit(EXIT_FAILURE);
+        }
+        strncpy(name + offset, (char*)packet + i + 1, label_length);
+        offset += label_length;
+        name[offset++] = '.'; // Add dot separator
+        i += label_length + 1;
+    }
+    name[offset - 1] = '\0'; // Replace last dot with null terminator
+    snprintf(resource_record->name, sizeof(resource_record->name), "%s", name);
     return i + 1;
 }
 
