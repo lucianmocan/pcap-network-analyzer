@@ -59,8 +59,8 @@ parse_ipv4(const uint8_t *packet, bool verbose)
     memcpy(ipv4_header.raw_destination_address, &ip->ip_dst, 4);
 
     // Source and destination IP
-    snprintf(ipv4_header.source_ipv4, 16, "%s", inet_ntoa(ip->ip_src));
-    snprintf(ipv4_header.destination_ipv4, 16, "%s", inet_ntoa(ip->ip_dst));
+    inet_ntop(AF_INET, &ip->ip_src, ipv4_header.source_ipv4, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &ip->ip_dst, ipv4_header.destination_ipv4, INET_ADDRSTRLEN);
 
     return ipv4_header;
 }
@@ -173,6 +173,13 @@ ipv4_get_protocol_name(uint8_t protocol, char protocol_name[PROTOCOL_NAME_SIZE],
                 snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMP (Internet Control Message Protocol)");
             } else {
                 snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMP");
+            }
+            break;
+        case IPPROTO_ICMPV6:
+            if (verbose){
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMPv6 (Internet Control Message Protocol version 6)");
+            } else {
+                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMPv6");
             }
             break;
         case IPPROTO_IGMP:

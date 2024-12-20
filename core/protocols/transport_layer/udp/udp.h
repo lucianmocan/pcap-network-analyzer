@@ -40,6 +40,7 @@ typedef struct my_udp_header{
     uint16_t checksum; // using a different size (addresses are longer with IPv6) pseudo-header for IPv4 and IPv6
                        // IPv6 : https://datatracker.ietf.org/doc/html/rfc2460#section-8.1
                        // IPv4 : https://datatracker.ietf.org/doc/html/rfc768 [Page 2]
+    uint16_t calculated_checksum;
     bool checksum_correct;
 
 } my_udp_header_t;

@@ -149,6 +149,7 @@ check_file(char* filename)
         fprintf(stderr, "Can't open file '%s'.\n", filename);
         return -1;
     }
+    fprintf(stdout, "File '%s' ok.\n", filename);
     close(fd);
     return 0;
 }
@@ -228,6 +229,12 @@ check_all(char* interface, char* filename, char* filter, int verbosity)
             exit(EXIT_FAILURE);
         }
         printf("-----------------------------------\n");
+    }
+
+    if (verbosity < 1 || verbosity > 3){
+        fprintf(stderr, "Invalid verbosity level: %d.\n", verbosity);
+        printf("-----------------------------------\n");
+        exit(EXIT_FAILURE);
     }
 
     printf("Verbosity level: %d.\n", verbosity);

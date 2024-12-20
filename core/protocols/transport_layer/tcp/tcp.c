@@ -30,7 +30,7 @@ parse_tcp_header(const uint8_t *packet, uint8_t *src_add, uint8_t *dst_add, uint
 
     // Build the pseudo-header and packet
     int combined_len;
-    uint16_t *combined;
+    uint16_t *combined = NULL;
     if (net_protocol == IPPROTO_IPV4){
         combined = build_ipv4_pseudo_header_and_packet((uint8_t*)tcp, tcp_header.data_offset * 4, src_add, dst_add, IPPROTO_TCP, &combined_len);
     } else if (net_protocol == IPPROTO_IPV6) {
@@ -39,9 +39,11 @@ parse_tcp_header(const uint8_t *packet, uint8_t *src_add, uint8_t *dst_add, uint
 
     // Calculate the checksum
     uint16_t calculated_checksum = ntohs(calculate_checksum(combined, combined_len));
+    tcp_header.calculated_checksum = calculated_checksum;
+    free(combined);
 
     // Check if checksum match
-    tcp_header.checksum_correct = (calculated_checksum == tcp_header.checksum);
+    tcp_header.checksum_correct = (calculated_checksum == tcp_header.checksum || tcp_header.calculated_checksum == 0x0000 || tcp_header.calculated_checksum == 0xFFFF);
 
     tcp_header.urgent_pointer = ntohs(tcp->th_urp);
 

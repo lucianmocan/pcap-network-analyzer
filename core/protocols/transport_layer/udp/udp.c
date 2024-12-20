@@ -26,7 +26,7 @@ parse_udp(const uint8_t *packet, uint8_t *src_add, uint8_t *dst_add, uint8_t net
 
     // Build the pseudo-header and packet
     int combined_len;
-    uint16_t *combined;
+    uint16_t *combined = NULL;
     if (net_protocol == IPPROTO_IPV4){
         combined = build_ipv4_pseudo_header_and_packet((uint8_t*)udp, udp_header.length, src_add, dst_add, IPPROTO_UDP, &combined_len);
     } else if (net_protocol == IPPROTO_IPV6) {
@@ -35,9 +35,11 @@ parse_udp(const uint8_t *packet, uint8_t *src_add, uint8_t *dst_add, uint8_t net
 
     // Calculate the checksum
     uint16_t calculated_checksum = ntohs(calculate_checksum(combined, combined_len));
+    udp_header.calculated_checksum = calculated_checksum;
+    free(combined);
     
     // Check if checksum match
-    udp_header.checksum_correct = (calculated_checksum == udp_header.checksum);
+    udp_header.checksum_correct = (calculated_checksum == udp_header.checksum || udp_header.calculated_checksum == 0x0000 || udp_header.calculated_checksum == 0xFFFF);
 
     return udp_header;
 }

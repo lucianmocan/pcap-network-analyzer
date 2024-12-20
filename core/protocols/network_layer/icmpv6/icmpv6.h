@@ -77,6 +77,7 @@ typedef struct my_icmpv6 {
     char icmpv6_code_desc[ICMPV6_CODE_DESC_SIZE];
 
     uint16_t checksum;
+    uint16_t calculated_checksum;
     bool checksum_valid;
 
     uint16_t identifier;
@@ -89,6 +90,7 @@ typedef struct my_icmpv6 {
 
 
 my_icmpv6_t parse_icmpv6(const uint8_t *packet, size_t packet_length, uint8_t *src_ipv6, uint8_t *dst_ipv6, bool verbose);
+void free_parse_icmpv6(my_icmpv6_t *my_icmpv6);
 // helpers
 void get_icmpv6_type_desc(uint8_t type, char *desc, bool verbose);
 void get_icmpv6_code_desc(uint8_t type, uint8_t code, char *desc, bool verbose);

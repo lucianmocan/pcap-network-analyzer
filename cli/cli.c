@@ -1,4 +1,3 @@
-#include "cli_helper.h"
 #include "cli.h"
 
 pcap_t *capture;
@@ -9,7 +8,7 @@ main(int argc, char** argv)
     char interface[CMD_ARG_SIZE] = {0};
     char filename[CMD_ARG_SIZE] = {0};
     char filter[CMD_ARG_SIZE] = {0};
-    int verbosity = 0;
+    int verbosity = 1;
 
     if (argc == 1){
         display_welcome_message();
@@ -42,13 +41,16 @@ signal_handler(int sig)
 void
 packet_handler(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
 {
-    printf("Packet captured.\n");
+    handler_args_t *handler_args = (handler_args_t*)args;
+    int verbosity = handler_args->verbosity;
+    parse_cli(header, (uint8_t*)packet, verbosity);
 }
 
 void
 start_capture(char* source, char* filter, int verbosity, bool is_live)
 {   
     char errbuf[PCAP_ERRBUF_SIZE];
+    handler_args_t handler_args = {verbosity};
 
     if (is_live) {
         // get the interface
@@ -78,7 +80,7 @@ start_capture(char* source, char* filter, int verbosity, bool is_live)
     signal(SIGINT, signal_handler);
 
     // start the capture
-    pcap_loop(capture, 0, packet_handler, NULL);
+    pcap_loop(capture, 0, packet_handler, (uint8_t*)&handler_args);
 
     printf("\nCapture stopped.\n");
     printf("Cleaning up...\n");

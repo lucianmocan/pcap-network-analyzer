@@ -3,6 +3,12 @@
 
 #include <signal.h>
 #include <stdbool.h>
+#include "cli_helper.h"
+#include "cli_parser.h"
+
+typedef struct {
+    int verbosity;
+} handler_args_t;
 
 void start_capture(char* source, char* filter, int verbosity, bool is_live);
 

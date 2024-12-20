@@ -47,6 +47,7 @@ typedef struct my_icmp {
     char icmp_code_desc[ICMP_CODE_DESC_SIZE];
 
     uint16_t checksum;
+    uint16_t calculated_checksum;
     bool checksum_valid;
 
     uint16_t identifier;

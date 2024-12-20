@@ -30,7 +30,8 @@ parse_icmp(const uint8_t *packet, size_t packet_length, const bool verbose)
 
     // recalculate the checksum
     uint16_t calculated_checksum = ntohs(calculate_checksum((uint16_t *)icmp, packet_length));
-    icmp_p.checksum_valid = (calculated_checksum == icmp_p.checksum);
+    icmp_p.calculated_checksum = calculated_checksum;
+    icmp_p.checksum_valid = (calculated_checksum == icmp_p.checksum || icmp_p.calculated_checksum == 0x0000 || icmp_p.calculated_checksum == 0xFFFF);
 
     // destination unreachable doesn't have these fields (unused)
     if (icmp_p.type == ICMP_ECHO || icmp_p.type == ICMP_ECHOREPLY){

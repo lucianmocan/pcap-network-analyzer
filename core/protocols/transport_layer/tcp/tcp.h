@@ -54,6 +54,7 @@ typedef struct my_tcp_header {
 
     uint16_t window;
     uint16_t checksum;
+    uint16_t calculated_checksum;
     bool checksum_correct;
 
     uint16_t urgent_pointer;

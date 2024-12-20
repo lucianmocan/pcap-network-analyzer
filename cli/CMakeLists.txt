@@ -7,10 +7,12 @@ add_executable(pcapna
     cli.h
     cli_helper.c
     cli_helper.h
+    cli_parser.c
+    cli_parser.h
 )
 
 # Link the CLI executable to the API library
-target_link_libraries(pcapna PUBLIC interface)
+target_link_libraries(pcapna PUBLIC interface ethernet ipv4 ipv6 icmp icmpv6 tcp udp dhcp_bootp dns arp)
 
 
 # Link dependencies (e.g., core and api modules)

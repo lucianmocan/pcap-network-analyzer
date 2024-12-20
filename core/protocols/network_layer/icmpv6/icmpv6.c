@@ -22,7 +22,8 @@ my_icmpv6_t parse_icmpv6(const uint8_t *packet, size_t packet_length, uint8_t *s
     int combined_len;
     uint16_t *combined = build_ipv6_pseudo_header_and_packet((uint8_t*)icmp6_hdr, packet_length, src_ipv6, dst_ipv6, next_header, &combined_len);
     uint16_t calculated_checksum = ntohs(calculate_checksum(combined, combined_len));
-    my_icmpv6.checksum_valid = (calculated_checksum == my_icmpv6.checksum);
+    my_icmpv6.calculated_checksum = calculated_checksum;
+    my_icmpv6.checksum_valid = (calculated_checksum == my_icmpv6.checksum || my_icmpv6.calculated_checksum == 0x0000 || my_icmpv6.calculated_checksum == 0xFFFF);
 
     if (my_icmpv6.type == ICMP6_ECHO_REQUEST || my_icmpv6.type == ICMP6_ECHO_REPLY){
         my_icmpv6.identifier = ntohs(icmp6_hdr->icmp6_id);

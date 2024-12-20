@@ -15,6 +15,8 @@
 #define DNS_LABEL_MAX_SIZE 63
 #define DNS_DESC_SIZE 64
 
+#define PORT_DNS 53
+
 /* 
 Size limits in DNS: https://datatracker.ietf.org/doc/html/rfc1035#section-2.3.4
     labels          63 octets or less

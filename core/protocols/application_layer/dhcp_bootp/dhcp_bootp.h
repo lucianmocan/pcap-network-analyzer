@@ -15,6 +15,9 @@
 #include "mac_address.h"
 #include "linked_list.h"
 
+#define PORT_BOOTPS 67
+#define PORT_BOOTPC 68
+
 // DHCP options DHCP
 #define DHCP_SUBNET_MASK 1
 #define DHCP_TIME_OFFSET 2
