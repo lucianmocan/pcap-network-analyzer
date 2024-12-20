@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.12)
 # Add the executable for the CLI module
 add_executable(pcapna
     cli.c
+    cli.h
     cli_helper.c
     cli_helper.h
 )

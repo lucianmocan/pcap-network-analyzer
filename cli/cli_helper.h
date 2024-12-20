@@ -1,5 +1,5 @@
-#ifndef CLI_H
-#define CLI_H
+#ifndef CLI_HELPER_H
+#define CLI_HELPER_H
 
 #include <stdio.h>
 #include <stdlib.h>

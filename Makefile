@@ -2,7 +2,7 @@ all:
 	cmake -S . -B build
 	cd build/ && make
 	cd build/ && ctest --output-on-failure
-
+	cd build/ && cd cli/ && cp pcapna ../../
 clean:
 	rm -rf build/
 
