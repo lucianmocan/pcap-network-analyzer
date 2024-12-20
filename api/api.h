@@ -3,6 +3,5 @@
 
 #include <pcap.h>
 #include <net/ethernet.h>
-#include "interface.h"
 
 #endif

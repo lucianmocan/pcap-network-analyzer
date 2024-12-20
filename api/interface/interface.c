@@ -19,6 +19,17 @@ get_interfaces()
     return alldevsp;
 }
 
+pcap_if_t*
+get_interface(char* interface, pcap_if_t* alldevsp)
+{
+    for (pcap_if_t *dev = alldevsp; dev != NULL; dev = dev->next) {
+        if (strcmp(dev->name, interface) == 0) {
+            return dev;
+        }
+    }
+    return NULL;
+}
+
 /**
  * @brief Free the interfaces list object
  * 

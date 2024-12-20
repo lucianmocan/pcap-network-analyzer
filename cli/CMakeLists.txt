@@ -10,7 +10,7 @@ add_executable(pcapna
 )
 
 # Link the CLI executable to the API library
-target_link_libraries(pcapna PRIVATE api)
+target_link_libraries(pcapna PUBLIC interface)
 
 
 # Link dependencies (e.g., core and api modules)

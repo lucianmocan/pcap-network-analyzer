@@ -5,6 +5,7 @@ all:
 	cd build/ && cd cli/ && cp pcapna ../../
 clean:
 	rm -rf build/
+	rm -f pcapna
 
 docker-build:
 	docker build -t pcap_analyzer_image -f .docker/Dockerfile .
