@@ -14,7 +14,7 @@
 #include "check_sum.h"
 
 #define FLAGS_DESC_SIZE 32
-#define PROTOCOL_NAME_SIZE 42
+#define PROTOCOL_NAME_SIZE 90
 #define IP_ADDR_SIZE 16
 
 
