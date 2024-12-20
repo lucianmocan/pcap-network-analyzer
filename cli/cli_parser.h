@@ -14,6 +14,7 @@
 #include "icmpv6.h"
 #include "dhcp_bootp.h"
 #include "dns.h"
+#include <time.h>
 
 #include <string.h>
 
