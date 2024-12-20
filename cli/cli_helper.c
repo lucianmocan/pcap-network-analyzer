@@ -1,10 +1,4 @@
 #include "cli_helper.h"
-#include "api.h"
-#include "interface.h"
-
-#include <pcap.h>
-#include <arpa/inet.h>
-#include <fcntl.h>
 
 void 
 display_welcome_message()

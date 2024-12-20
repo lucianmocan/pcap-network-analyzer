@@ -6,6 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
+#include "interface.h"
+
+#include <pcap.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
 
 #define CMD_ARG_SIZE 100
 
