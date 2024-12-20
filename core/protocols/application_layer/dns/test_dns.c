@@ -29,6 +29,16 @@ void test_parse_dns()
     assert(dns_header.ancount == 0);
     assert(dns_header.nscount == 0);
     assert(dns_header.arcount == 0);
+
+    node_t *tmp = dns_header.question_section;
+    for (; tmp != NULL; tmp = tmp->next){
+        question_section_t *question_section = (question_section_t*)tmp->data;
+        assert(strcmp(question_section->qname, "95.6.192.10.in-addr.arpa") == 0);
+        assert(question_section->qtype == 12);
+        assert(strcmp(question_section->qtype_desc, "PTR") == 0);
+        assert(question_section->qclass == 1);
+        assert(strcmp(question_section->qclass_desc, "IN") == 0);
+    }
 }
 
 int main()

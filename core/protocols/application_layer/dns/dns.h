@@ -6,11 +6,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 #include "linked_list.h"
 
 #define DNS_NAME_MAX_SIZE 255
 #define DNS_LABEL_MAX_SIZE 63
+#define DNS_DESC_SIZE 64
 
 /* 
 Size limits in DNS: https://datatracker.ietf.org/doc/html/rfc1035#section-2.3.4
@@ -97,23 +99,37 @@ https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.1
 #define RCODE_NOT_IMPLEMENTED 4
 #define RCODE_REFUSED 5
 
+// TYPE/QTYPE values
+#define TYPE_A 1       // a host address
+#define TYPE_NS 2      // an authoritative name server
+#define TYPE_CNAME 5   // the canonical name for an alias
+#define TYPE_SOA 6     // marks the start of a zone of authority
+#define TYPE_WKS 11          // a well known service description
+#define TYPE_PTR 12          // a domain name pointer
+#define TYPE_HINFO 13        // host information
+#define TYPE_MINFO 14        // mailbox or mail list information
+#define TYPE_MX 15           // mail exchange
+#define TYPE_TXT 16          // text strings
 
-typedef struct dns_label {
-    uint8_t length;
-    uint8_t value[DNS_LABEL_MAX_SIZE];
-    char value_desc[DNS_LABEL_MAX_SIZE + 1];
-} dns_label_t;
+// CLASS/QCLASS values
+#define CLASS_IN 1     // the Internet
+#define CLASS_CH 3     // the Chaos class
+#define CLASS_HS 4     // Hesiod [Dyer 87]
 
 typedef struct question_section {
-    node_t* qname;   // a domain name represented as a sequence of labels, where each label consists of a length octet followed by that number of octets.
+    char qname[DNS_NAME_MAX_SIZE];   // a domain name represented as a sequence of labels, where each label consists of a length octet followed by that number of octets.
     uint16_t qtype;  // a two octet code which specifies the type of the query.
+    char qtype_desc[DNS_DESC_SIZE];
     uint16_t qclass; // a two octet code that specifies the class of the query.
+    char qclass_desc[DNS_DESC_SIZE];
 } question_section_t;
 
 typedef struct resource_record {
     node_t* name;    // a domain name to which this resource record pertains.
     uint16_t type;   // two octets containing one of the RR type codes.
+    char type_desc[DNS_DESC_SIZE];
     uint16_t class;  // two octets which specify the class of the data in the RDATA field.
+    char class_desc[DNS_DESC_SIZE];
     uint32_t ttl;    
     uint16_t rdlength; // the length in octets of the RDATA field.
     uint16_t* rdata;  
@@ -158,7 +174,7 @@ typedef struct my_dns_header {
     uint16_t nscount; // the number of name server resource records in the authority records section.
     uint16_t arcount; // the number of resource records in the additional records section.
 
-    question_section_t* question_section;
+    node_t* question_section;
     resource_record_t* answer_section;
     resource_record_t* authority_section;
     resource_record_t* additional_section;
@@ -177,7 +193,12 @@ void get_aa_desc(uint8_t aa, char *desc, bool verbose);
 void get_rcode_desc(uint8_t rcode, char *desc, bool verbose);
 void get_opcode_desc(uint8_t opcode, char *desc, bool verbose);
 void get_qr_desc(uint8_t qr, char *desc, bool verbose);
+void get_class_desc(uint16_t class, char *desc, bool verbose);
+void get_type_desc(uint16_t type, char *desc, bool verbose);
 
-
-
+int get_dns_qname(const uint8_t *packet, question_section_t *question_section);
+void get_dns_question(const uint8_t *packet, my_dns_header_t *dns_header, bool verbose);
+void get_dns_answer(const uint8_t *packet, my_dns_header_t *dns_header);
+void get_dns_authority(const uint8_t *packet, my_dns_header_t *dns_header);
+void get_dns_additional(const uint8_t *packet, my_dns_header_t *dns_header);
 #endif

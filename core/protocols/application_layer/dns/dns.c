@@ -38,6 +38,27 @@ parse_dns(const uint8_t *packet, bool verbose)
     dns_header.arcount = ntohs(*(uint16_t*)packet);
     packet += 2;
 
+    dns_header.question_section = NULL;
+    dns_header.answer_section = NULL;
+    dns_header.authority_section = NULL;
+    dns_header.additional_section = NULL;
+
+    if (dns_header.qdcount > 0){
+        get_dns_question(packet, &dns_header, verbose);
+    }
+
+    if (dns_header.ancount > 0){
+        get_dns_answer(packet, &dns_header);
+    }
+
+    if (dns_header.nscount > 0){
+        get_dns_authority(packet, &dns_header);
+    }
+
+    if (dns_header.arcount > 0){
+        get_dns_additional(packet, &dns_header);
+    }
+
     return dns_header;
 }
 
@@ -47,22 +68,193 @@ free_dns_header(my_dns_header_t *dns_header)
     // free_list(dns_header->name);
 }
 
-// void
-// get_dns_name(const uint8_t *packet, my_dns_header_t *dns_header)
-// {
-//     int i = 0;
-//     while (packet[i] != 0){
-//         dns_label_t *label = malloc(sizeof(dns_label_t));
-//         printf("Label length: %d\n", packet[i]);
-//         label->length = packet[i];
-//         strncpy((char*)label->value, (char*)packet + i + 1, label->length);
-//         label->value[label->length] = '\0';
-//         snprintf(label->value_desc, DNS_LABEL_MAX_SIZE + 1, "%s", label->value);
-//         printf("Label: %s\n", label->value_desc);
-//         dns_header->name = add_node(dns_header->name, (void*)label);
-//         i += label->length + 1;
-//     }
-// }
+void get_dns_answer(const uint8_t *packet, my_dns_header_t *dns_header){
+
+}
+void get_dns_authority(const uint8_t *packet, my_dns_header_t *dns_header){
+
+}
+void get_dns_additional(const uint8_t *packet, my_dns_header_t *dns_header){
+
+}
+
+
+void 
+get_dns_question(const uint8_t *packet, my_dns_header_t *dns_header, bool verbose)
+{
+    int count = dns_header->qdcount;
+    while(count > 0){
+        question_section_t *question_section = malloc(sizeof(question_section_t));
+        if (question_section == NULL){
+            fprintf(stderr, "Failed to allocate memory for question section\n");
+            exit(EXIT_FAILURE);
+        }
+        int qname_size = get_dns_qname(packet, question_section);
+        packet += qname_size;
+        question_section->qtype = ntohs(*(uint16_t*)packet);
+        get_type_desc(question_section->qtype, question_section->qtype_desc, verbose);
+        packet += 2;
+        question_section->qclass = ntohs(*(uint16_t*)packet);
+        get_class_desc(question_section->qclass, question_section->qclass_desc, verbose);
+        packet += 2;
+        dns_header->question_section = add_node_end(dns_header->question_section, (void*)question_section);
+        count--;
+    }
+}
+
+/**
+ * @brief Get the class/qclass description in a given string
+ * 
+ * @param desc 
+ * @param verbose 
+ */
+void
+get_class_desc(uint16_t class, char *desc, bool verbose){
+    // https://datatracker.ietf.org/doc/html/rfc1035#section-3.2.4
+    switch(class){
+        case CLASS_IN:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "IN (%d) the Internet", class);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "IN");
+            }
+            break;
+        case CLASS_CH:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "CH (%d) the CHAOS class", class);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "CH");
+            }
+            break;
+        case CLASS_HS:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "HS (%d) Hesiod", class);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "HS");
+            }
+            break;
+        default:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "class: Unknown (%d)", class);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "class: ?");
+            }
+            break;
+    }
+}
+
+/**
+ * @brief Get the type/qtype description in a given string
+ * 
+ * @param type 
+ * @param desc 
+ * @param verbose 
+ */
+void 
+get_type_desc(uint16_t type, char *desc, bool verbose)
+{
+    // https://datatracker.ietf.org/doc/html/rfc1035#section-3.2.2
+    switch(type){
+        case TYPE_A:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "A (%d) host address", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "A");
+            }
+            break;
+        case TYPE_NS:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "NS (%d) authoritative name server", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "NS");
+            }
+        case TYPE_CNAME:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "CNAME (%d) canonical name", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "CNAME");
+            }
+            break;
+        case TYPE_SOA:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "SOA (%d) zone of authority", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "SOA");
+            }
+            break;
+        case TYPE_PTR:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "PTR (%d) domain name pointer", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "PTR");
+            }
+            break;
+        case TYPE_HINFO:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "HINFO (%d) host information", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "HINFO");
+            }
+            break;
+        case TYPE_MINFO:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "MINFO (%d) mailbox or mail list information", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "MINFO");
+            }
+            break;
+        case TYPE_MX:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "MX (%d) mail exchange", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "MX");
+            }
+            break;
+        case TYPE_TXT:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "TXT (%d) text strings", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "TXT");
+            }
+            break;
+        default:
+            if (verbose){
+                snprintf(desc, DNS_DESC_SIZE, "qtype: Unknown (%d)", type);
+            } else {
+                snprintf(desc, DNS_DESC_SIZE, "qtype: ?");
+            }
+            break;
+    }
+}
+
+/**
+ * @brief Get the dns qnames in a string and return the number of bytes read
+ * 
+ * @param packet 
+ * @param question_section 
+ * @return int 
+ */
+int
+get_dns_qname(const uint8_t *packet, question_section_t *question_section)
+{
+    int i = 0;
+    int offset = 0;
+    char qname[DNS_LABEL_MAX_SIZE]; // at max 255 so we're good
+    while (packet[i] != 0){
+        int label_length = packet[i];
+        if (offset + label_length >= sizeof(qname)){
+            fprintf(stderr, "QName exceeds maximum allowed size\n");
+            exit(EXIT_FAILURE);
+        }
+        strncpy(qname + offset, (char*)packet + i + 1, label_length);
+        offset += label_length;
+        qname[offset++] = '.'; // Add dot separator
+        i += label_length + 1;
+    }
+    qname[offset - 1] = '\0'; // Replace last dot with null terminator
+    snprintf(question_section->qname, sizeof(question_section->qname), "%s", qname);
+    return i + 1;
+}
 
 /**
  * @brief Get the ra description in a given string
