@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.12)
-project(pcap_analyzer)
+project(pcap_analyzer LANGUAGES C CXX)
 
 # Enable testing
 enable_testing()
 
 # Set C standard
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_CXX_STANDARD 23)
 
 # Add utils
 add_subdirectory(utils)

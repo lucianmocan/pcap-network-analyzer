@@ -1,10 +1,10 @@
 add_library(ethernet
-    ethernet/ethernet.c
+    ethernet/ethernet.cc
     ethernet/ethernet.h
 )
 
 add_executable(test_ethernet
-    ethernet/test_ethernet.c
+    ethernet/test_ethernet.cc
 )
 
 target_link_libraries(test_ethernet ethernet)

@@ -16,8 +16,8 @@ parse_ethernet(const u_char *packet, bool verbose)
     ethernet = (struct ether_header*)(packet);
     
     my_ethernet_header_t ethernet_frame;
-    strcpy(ethernet_frame.src_mac, write_mac_address(ethernet->ether_shost));
-    strcpy(ethernet_frame.dst_mac, write_mac_address(ethernet->ether_dhost));
+    ethernet_frame.src_mac = write_mac_address(ethernet->ether_shost);
+    ethernet_frame.dst_mac = write_mac_address(ethernet->ether_dhost);
     ethernet_frame.type = ntohs(ethernet->ether_type);
 
     get_ethertype_desc(ethernet_frame.type, ethernet_frame.type_desc, verbose);
@@ -50,56 +50,56 @@ parse_ethernet(const u_char *packet, bool verbose)
  * @param type_desc 
  */
 void
-get_ethertype_desc(uint16_t type, char *type_desc, bool verbose)
+get_ethertype_desc(uint16_t type, std::string &type_desc, bool verbose)
 {
     switch(type){
         case ETHERTYPE_PUP:
             if (verbose){
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Type: PUP (0x%x)", ETHERTYPE_PUP);
+                type_desc = "Type: PUP (0x" + std::to_string(ETHERTYPE_PUP) + ")";
             } else {
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "PUP");
+                type_desc = "PUP";
             }
             break;
         case ETHERTYPE_IP:
             if (verbose){
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Type: IP (0x%x)", ETHERTYPE_IP);
+                type_desc = "Type: IP (0x" + std::to_string(ETHERTYPE_IP) + ")";
             } else {
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "IP");
+                type_desc = "IP";
             }
             break;
         case ETHERTYPE_ARP:
             if (verbose){
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Type: ARP (0x%x)", ETHERTYPE_ARP);
+                type_desc = "Type: ARP (0x" + std::to_string(ETHERTYPE_ARP) + ")";
             } else {
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "ARP");
+                type_desc = "ARP";
             }
             break;
         case ETHERTYPE_REVARP:
             if (verbose){
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Type: Reverse ARP (0x%x)", ETHERTYPE_REVARP);
+                type_desc = "Type: Reverse ARP (0x" + std::to_string(ETHERTYPE_REVARP) + ")";
             } else {
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Reverse ARP");
+                type_desc = "Reverse ARP";
             }
             break;
         case ETHERTYPE_IPV6:
             if (verbose){
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Type: IPv6 (0x%x)", ETHERTYPE_IPV6);
+                type_desc = "Type: IPv6 (0x" + std::to_string(ETHERTYPE_IPV6) + ")";
             } else {
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "IPv6");
+                type_desc = "IPv6";
             }
             break;
         case ETHERTYPE_VLAN:
             if (verbose){
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Type: VLAN (0x%x)", ETHERTYPE_VLAN);
+                type_desc = "Type: VLAN (0x" + std::to_string(ETHERTYPE_VLAN) + ")";
             } else {
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "VLAN");
+                type_desc = "VLAN";
             }
             break;
         default:
             if (verbose){
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Type: Unknown (0x%x)", type);
+                type_desc = "Type: Unknown (0x" + std::to_string(type) + ")";
             } else {
-                snprintf(type_desc, MY_ETHER_TYPE_DESC_SIZE, "Unknown");
+                type_desc = "Unknown";
             }
             break;
     }
