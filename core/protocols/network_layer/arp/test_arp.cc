@@ -1,5 +1,5 @@
 #include "arp.h"
-#include <assert.h>
+#include <cassert>
 
 void test_parse_arp()
 {
@@ -17,18 +17,17 @@ void test_parse_arp()
 
     my_arp_header_t arp_header = parse_arp(packet, true);
     assert(arp_header.hardware_type == 1);
-    assert(strcmp(arp_header.hardware_type_desc, "Hardware type: Ethernet (1)") == 0);
+    assert(arp_header.hardware_type_desc == "Hardware type: Ethernet (1)");
     assert(arp_header.protocol_type == 0x0800);
-    assert(strcmp(arp_header.protocol_type_desc, "Type: IP (0x800)") == 0);
+    assert(arp_header.protocol_type_desc == "Type: IP (0x800)");
     assert(arp_header.hardware_address_length == 6);
     assert(arp_header.protocol_length == 4);
     assert(arp_header.operation == 1);
-    printf("%s\n", arp_header.operation_desc);
-    assert(strcmp(arp_header.operation_desc, "Operation: Request to resolve address") == 0);
-    assert(strcmp(arp_header.sender_hardware_address, "00:11:22:33:44:55") == 0);
-    assert(strcmp(arp_header.sender_protocol_address, "1.2.3.4") == 0);
-    assert(strcmp(arp_header.target_hardware_address, "66:77:88:99:aa:bb") == 0);
-    assert(strcmp(arp_header.target_protocol_address, "5.6.7.8") == 0);
+    assert(arp_header.operation_desc == "Operation: Request to resolve address");
+    assert(arp_header.sender_hardware_address == "00:11:22:33:44:55");
+    assert(arp_header.sender_protocol_address == "1.2.3.4");
+    assert(arp_header.target_hardware_address == "66:77:88:99:aa:bb");
+    assert(arp_header.target_protocol_address == "5.6.7.8");
 }
 
 int main()

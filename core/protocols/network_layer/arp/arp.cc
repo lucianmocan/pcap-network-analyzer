@@ -31,16 +31,19 @@ parse_arp(const uint8_t *packet, bool verbose)
     get_operation_desc(arp_header.operation, arp_header.operation_desc, verbose);
 
     // get the sender hardware address
-    strcpy(arp_header.sender_hardware_address, write_mac_address(arp->arp_sha));
+    arp_header.sender_hardware_address = write_mac_address(arp->arp_sha);
 
     // get the sender protocol address
-    inet_ntop(AF_INET, arp->arp_spa, arp_header.sender_protocol_address, INET_ADDRSTRLEN);
+    char buffer[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, arp->arp_spa, buffer, INET_ADDRSTRLEN);
+    arp_header.sender_protocol_address = buffer;
 
     // get the target hardware address
-    strcpy(arp_header.target_hardware_address, write_mac_address(arp->arp_tha));
+    arp_header.target_hardware_address = write_mac_address(arp->arp_tha);
 
     // get the target protocol address
-    inet_ntop(AF_INET, arp->arp_tpa, arp_header.target_protocol_address, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, arp->arp_tpa, buffer, INET_ADDRSTRLEN);
+    arp_header.target_protocol_address = buffer;
 
     return arp_header;
 }
@@ -52,21 +55,21 @@ parse_arp(const uint8_t *packet, bool verbose)
  * @param operation_desc 
  */
 void
-get_operation_desc(uint16_t operation, char *operation_desc, bool verbose)
+get_operation_desc(uint16_t operation, std::string& operation_desc, bool verbose)
 {
     switch(operation){
         case ARPOP_REQUEST:
             if (verbose){
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Operation: Request to resolve address");
+                operation_desc = "Operation: Request to resolve address";
             } else {
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Request");
+                operation_desc = "Request";
             }
             break; 
         case ARPOP_REPLY:
             if (verbose){
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Operation: Response to previous request");
+                operation_desc = "Operation: Response to previous request";
             } else {
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Reply");
+                operation_desc = "Reply";
             }
             break;
         #ifdef __APPLE__
@@ -76,9 +79,9 @@ get_operation_desc(uint16_t operation, char *operation_desc, bool verbose)
         case ARPOP_RREQUEST:
         #endif
             if (verbose){
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Operation: Request protocol address given hardware");
+                operation_desc = "Operation: Request protocol address given hardware";
             } else {
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Reverse Request");
+                operation_desc = "Reverse Request";
             }
             break;
         #ifdef __APPLE__
@@ -88,9 +91,9 @@ get_operation_desc(uint16_t operation, char *operation_desc, bool verbose)
         case ARPOP_RREPLY:
         #endif
             if (verbose){
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Operation: Response giving protocol address");
+                operation_desc = "Operation: Response giving protocol address";
             } else {
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Reverse Reply");
+                operation_desc = "Reverse Reply";
             }
             break;
         #ifdef __APPLE__
@@ -100,9 +103,9 @@ get_operation_desc(uint16_t operation, char *operation_desc, bool verbose)
         case ARPOP_InREQUEST:
         #endif
             if (verbose){
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Operation: Request to identify peer");
+                operation_desc = "Operation: Request to identify peer";
             } else {
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Inverse Request");
+                operation_desc = "Inverse Request";
             }
             break;
         #ifdef __APPLE__
@@ -112,9 +115,9 @@ get_operation_desc(uint16_t operation, char *operation_desc, bool verbose)
         case ARPOP_InREPLY:
         #endif
             if (verbose){
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Operation: Response identifying peer");
+                operation_desc = "Operation: Response identifying peer";
             } else {
-                snprintf(operation_desc, MY_ARP_OPERATION_DESC_SIZE, "Inverse Reply");
+                operation_desc = "Inverse Reply";
             }
             break;
     }
@@ -128,21 +131,21 @@ get_operation_desc(uint16_t operation, char *operation_desc, bool verbose)
  * @param verbose 
  */
 void
-get_hardware_type_desc(uint16_t hardware_type, char *hardware_type_desc, bool verbose)
+get_hardware_type_desc(uint16_t hardware_type, std::string& hardware_type_desc, bool verbose)
 {
     switch(hardware_type){
         case ARPHRD_ETHER:
             if (verbose){
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "Hardware type: Ethernet (%d)", hardware_type);
+                hardware_type_desc = "Hardware type: Ethernet (" + std::to_string(hardware_type) + ")";
             } else {
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "Ethernet");
+                hardware_type_desc = "Ethernet";
             }
             break;
         case ARPHRD_IEEE802:
             if (verbose){
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "Hardware type: IEEE802 (%d)", hardware_type);
+                hardware_type_desc = "Hardware type: IEEE802 (" + std::to_string(hardware_type) + ")";
             } else {
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "IEEE802");
+                hardware_type_desc = "IEEE802";
             }
             break;
         #ifdef __APPLE__
@@ -152,16 +155,16 @@ get_hardware_type_desc(uint16_t hardware_type, char *hardware_type_desc, bool ve
         case ARPHRD_DLCI:
         #endif
             if (verbose){
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "Hardware type: Frame Relay (%d)", hardware_type);
+                hardware_type_desc = "Hardware type: Frame Relay (" + std::to_string(hardware_type) + ")";
             } else {
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "Frame Relay");
+                hardware_type_desc = "Frame Relay";
             }
             break;
         case ARPHRD_IEEE1394:
             if (verbose){
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "Hardware type: IEEE1394 (%d)", hardware_type);
+                hardware_type_desc = "Hardware type: IEEE1394 (" + std::to_string(hardware_type) + ")";
             } else {
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "IEEE1394");
+                hardware_type_desc = "IEEE1394";
             }
             break;
         #ifdef __APPLE__
@@ -171,9 +174,9 @@ get_hardware_type_desc(uint16_t hardware_type, char *hardware_type_desc, bool ve
         case ARPHRD_EUI64:
         #endif
             if (verbose){
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "Hardware type: IEEE1394 EUI-64 (%d)", hardware_type);
+                hardware_type_desc = "Hardware type: IEEE1394 EUI-64 (" + std::to_string(hardware_type) + ")";
             } else {
-                snprintf(hardware_type_desc, MY_ARP_HARDWARE_TYPE_DESC_SIZE, "IEEE1394 EUI-64");
+                hardware_type_desc = "IEEE1394 EUI-64";
             }
             break;
     }
