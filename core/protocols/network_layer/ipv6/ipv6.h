@@ -5,8 +5,8 @@
 #include <netinet/ip6.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <string.h>
-#include <stdbool.h>
+
+#include <string>
 
 #include "dscp.h"
 #include "ipv4.h"
@@ -62,11 +62,11 @@ typedef struct my_ipv6_header {
 
     // DSCP
     uint8_t dscp_value;
-    char dscp_desc[DSCP_DESC_SIZE];
+    std::string dscp_desc;
 
     // ECN
     uint8_t ecn_value;
-    char ecn_desc[ECN_DESC_SIZE];
+    std::string ecn_desc;
 
     // Payload length
     uint16_t payload_length;
@@ -75,7 +75,7 @@ typedef struct my_ipv6_header {
     immediately following the IPv6 header.  
     Uses the same values as the IPv4 Protocol field. */
     uint8_t next_header;
-    char next_header_name[PROTOCOL_NAME_SIZE];
+    std::string next_header_name;
 
     // Hop Limit
     uint8_t hop_limit;
@@ -83,9 +83,9 @@ typedef struct my_ipv6_header {
     // Source and destination IP addresses
     uint8_t raw_source_address[IPV6_INT8_ADDR_SIZE];
     uint8_t raw_destination_address[IPV6_INT8_ADDR_SIZE];
-    
-    char source_address[IPV6_ADDR_SIZE];
-    char destination_address[IPV6_ADDR_SIZE];
+
+    std::string source_address;
+    std::string destination_address;
 } my_ipv6_header_t;
 
 my_ipv6_header_t parse_ipv6(const u_int8_t *packet, bool verbose);

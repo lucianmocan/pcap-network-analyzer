@@ -1,47 +1,47 @@
 #include "ipv4.h"
-#include <assert.h>
+#include <cassert>
 #include <arpa/inet.h>
 
 void test_get_flags_desc(){
     uint16_t ip_off = 0x4000;
-    char flags_desc[FLAGS_DESC_SIZE];
+    std::string flags_desc;
     get_flags_desc(flags_desc, ip_off, true);
-    assert(strcmp(flags_desc, "DF (Don't Fragment)") == 0);
-    
+    assert(flags_desc == "DF (Don't Fragment)");
+
     ip_off = 0x2000;
     get_flags_desc(flags_desc, ip_off, true);
-    assert(strcmp(flags_desc, "MF (More Fragments)") == 0);
-    
+    assert(flags_desc == "MF (More Fragments)");
+
     ip_off = 0x8000;
     get_flags_desc(flags_desc, ip_off, false);
-    assert(strcmp(flags_desc, "RF") == 0);
-    
+    assert(flags_desc == "RF");
+
     ip_off = 0x4000;
     get_flags_desc(flags_desc, ip_off, false);
-    assert(strcmp(flags_desc, "DF") == 0);
-    
+    assert(flags_desc == "DF");
+
     ip_off = 0x2000;
     get_flags_desc(flags_desc, ip_off, false);
-    assert(strcmp(flags_desc, "MF") == 0);
+    assert(flags_desc == "MF");
 }
 
 void test_get_protocol_name(){
     uint8_t protocol = 0x06;
-    char protocol_name[PROTOCOL_NAME_SIZE];
+    std::string protocol_name;
     ipv4_get_protocol_name(protocol, protocol_name, true);
-    assert(strcmp(protocol_name, "TCP (Transmission Control Protocol)") == 0);
-    
+    assert(protocol_name == "TCP (Transmission Control Protocol)");
+
     protocol = 0x11;
     ipv4_get_protocol_name(protocol, protocol_name, true);
-    assert(strcmp(protocol_name, "UDP (User Datagram Protocol)") == 0);
-    
+    assert(protocol_name == "UDP (User Datagram Protocol)");
+
     protocol = 0x01;
     ipv4_get_protocol_name(protocol, protocol_name, false);
-    assert(strcmp(protocol_name, "ICMP") == 0);
-    
+    assert(protocol_name == "ICMP");
+
     protocol = 0x02;
     ipv4_get_protocol_name(protocol, protocol_name, false);
-    assert(strcmp(protocol_name, "IGMP") == 0);
+    assert(protocol_name == "IGMP");
 }
 
 void test_parse_ipv4(){
@@ -57,9 +57,9 @@ void test_parse_ipv4(){
     assert(ipv4_header.header_length == 5);
 
     // test dscp & ecn
-    assert(strcmp(ipv4_header.dscp_desc, "CS0: Best Effort / Standard") == 0);
+    assert(ipv4_header.dscp_desc == "CS0: Best Effort / Standard");
     assert(ipv4_header.dscp_value == 0);
-    assert(strcmp(ipv4_header.ecn_desc, "Not-ECT: Not ECN-Capable Transport") == 0);
+    assert(ipv4_header.ecn_desc == "Not-ECT: Not ECN-Capable Transport");
     assert(ipv4_header.ecn_value == 0);
 
     // test total_length, identification, flags, fragment_offset
@@ -68,19 +68,19 @@ void test_parse_ipv4(){
     assert(ipv4_header.flags.reserved == 0);
     assert(ipv4_header.flags.dont_fragment == 1);
     assert(ipv4_header.flags.more_fragments == 0);
-    assert(strcmp(ipv4_header.flags_desc, "DF (Don't Fragment)") == 0);
+    assert(ipv4_header.flags_desc == "DF (Don't Fragment)");
     assert(ipv4_header.fragment_offset == 0);
 
     // test time_to_live, protocol, checksum
     assert(ipv4_header.time_to_live == 64);
     assert(ipv4_header.protocol == 17);
-    assert(strcmp(ipv4_header.protocol_name, "UDP (User Datagram Protocol)") == 0);
+    assert(ipv4_header.protocol_name == "UDP (User Datagram Protocol)");
     assert(ipv4_header.checksum == 0xb861);
     assert(ipv4_header.checksum_correct == true);
 
     // test source_ipv4, destination_ipv4
-    assert(strcmp(ipv4_header.source_ipv4, "192.168.0.1") == 0);
-    assert(strcmp(ipv4_header.destination_ipv4, "192.168.0.199") == 0);
+    assert(ipv4_header.source_ipv4 == "192.168.0.1");
+    assert(ipv4_header.destination_ipv4 == "192.168.0.199");
 }
 
 int main(){

@@ -38,8 +38,12 @@ parse_ipv6(const u_char *packet, bool verbose)
     memcpy(ipv6_header.raw_source_address, ip6->ip6_src.s6_addr, IPV6_INT8_ADDR_SIZE);
     memcpy(ipv6_header.raw_destination_address, ip6->ip6_dst.s6_addr, IPV6_INT8_ADDR_SIZE);
 
-    inet_ntop(AF_INET6, &ip6->ip6_src, ipv6_header.source_address, IPV6_ADDR_SIZE);
-    inet_ntop(AF_INET6, &ip6->ip6_dst, ipv6_header.destination_address, IPV6_ADDR_SIZE);
+    char source_buffer[IPV6_ADDR_SIZE];
+    char destination_buffer[IPV6_ADDR_SIZE];
+    inet_ntop(AF_INET6, &ip6->ip6_src, source_buffer, IPV6_ADDR_SIZE);
+    inet_ntop(AF_INET6, &ip6->ip6_dst, destination_buffer, IPV6_ADDR_SIZE);
+    ipv6_header.source_address = source_buffer;
+    ipv6_header.destination_address = destination_buffer;
 
     return ipv6_header;
 }

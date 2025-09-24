@@ -6,7 +6,7 @@ add_library(ipv4
 )
 
 add_library(ipv6
-    ipv6/ipv6.c
+    ipv6/ipv6.cc
     ipv6/ipv6.h
 )
 
@@ -35,7 +35,7 @@ set_tests_properties(test_ipv4 PROPERTIES DEPENDS test_dscp)
 set_tests_properties(test_ipv4 PROPERTIES DEPENDS test_check_sum)
 
 add_executable(test_ipv6
-    ipv6/test_ipv6.c
+    ipv6/test_ipv6.cc
 )
 
 target_link_libraries(test_ipv6 ipv6)

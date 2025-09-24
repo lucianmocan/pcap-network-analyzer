@@ -55,9 +55,6 @@ DSCP values: https://www.iana.org/assignments/dscp-registry/dscp-registry.xhtml
 #define IS_VALID_DSCP(x) ((x) <= 63 && (x) >= 0)    // DSCP is in [0-63]
 #define IS_VALID_ECN(x) ((x) <= 3 && (x) >= 0)      // ECN is in [0-3]
 
-#define ECN_DESC_SIZE 40
-#define DSCP_DESC_SIZE 40
-
 void get_dscp_desc(uint8_t dscp, std::string& dscp_desc, bool verbose);
 void get_ecn_desc(uint8_t ecn, std::string& ecn_desc, bool verbose);
 

@@ -5,9 +5,11 @@
 #include <netinet/if_ether.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+
+#include <string>
+
 #include "ethernet.h"
 #include "mac_address.h"
-#include <string>
 
 // IPv4 over Ethernet ARP header
 // https://en.wikipedia.org/wiki/Address_Resolution_Protocol#cite_note-IANA-2
