@@ -1,29 +1,29 @@
 #include "dscp.h"
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <string>
 
 void
 test_dcsp_desc()
 {
-    char dscp_desc[DSCP_DESC_SIZE];
+    std::string dscp_desc;
     get_dscp_desc(CS0, dscp_desc, true);
-    assert(strcmp(dscp_desc, "CS0: Best Effort / Standard") == 0);
+    assert(dscp_desc == "CS0: Best Effort / Standard");
 
     get_dscp_desc(CS1, dscp_desc, false);
-    assert(strcmp(dscp_desc, "CS1") == 0);
+    assert(dscp_desc == "CS1");
 
     get_dscp_desc(-1, dscp_desc, true);
-    assert(strcmp(dscp_desc, "Invalid DSCP value") == 0);
+    assert(dscp_desc == "Invalid DSCP value");
 
     get_dscp_desc(AF42, dscp_desc, true);
-    assert(strcmp(dscp_desc, "AF42: Class 4, Medium Drop Probability") == 0);
+    assert(dscp_desc == "AF42: Class 4, Medium Drop Probability");
 }
 
 void
 test_ecn_desc()
 {
-    char ecn_desc[ECN_DESC_SIZE];
-
+    std::string ecn_desc;
+    
     #ifdef __linux__
     get_ecn_desc(IPTOS_ECN_NOT_ECT, ecn_desc, true);
     #endif
@@ -31,8 +31,8 @@ test_ecn_desc()
     #ifdef __APPLE__
     get_ecn_desc(IPTOS_ECN_NOTECT, ecn_desc, true);
     #endif
-    
-    assert(strcmp(ecn_desc, "Not-ECT: Not ECN-Capable Transport") == 0);
+
+    assert(ecn_desc == "Not-ECT: Not ECN-Capable Transport");
 }
 
 void

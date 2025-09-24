@@ -1,10 +1,10 @@
 add_library(dscp
-    dscp/dscp.c
+    dscp/dscp.cc
     dscp/dscp.h
 )
 
 add_executable(test_dscp
-    dscp/test_dscp.c
+    dscp/test_dscp.cc
 )
 
 target_link_libraries(test_dscp dscp)
