@@ -59,8 +59,12 @@ parse_ipv4(const uint8_t *packet, bool verbose)
     memcpy(ipv4_header.raw_destination_address, &ip->ip_dst, 4);
 
     // Source and destination IP
-    inet_ntop(AF_INET, &ip->ip_src, ipv4_header.source_ipv4, INET_ADDRSTRLEN);
-    inet_ntop(AF_INET, &ip->ip_dst, ipv4_header.destination_ipv4, INET_ADDRSTRLEN);
+    char src_ip[INET_ADDRSTRLEN];
+    char dst_ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &ip->ip_src, src_ip, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &ip->ip_dst, dst_ip, INET_ADDRSTRLEN);
+    ipv4_header.source_ipv4 = src_ip;
+    ipv4_header.destination_ipv4 = dst_ip;
 
     return ipv4_header;
 }
@@ -122,34 +126,34 @@ build_ipv4_pseudo_header_and_packet(uint8_t *packet, int packet_length, uint8_t 
  * @param verbose 
  */
 void 
-get_flags_desc(char flags_desc[FLAGS_DESC_SIZE], uint16_t ip_off, bool verbose)
+get_flags_desc(std::string& flags_desc, uint16_t ip_off, bool verbose)
 {
     if (verbose)
     {
         if (ip_off & IP_RF)
         {
-            snprintf(flags_desc, FLAGS_DESC_SIZE, "RF (Reserved)");
+            flags_desc += "RF (Reserved)";
         }
         if (ip_off & IP_DF)
         {
-            snprintf(flags_desc, FLAGS_DESC_SIZE, "DF (Don't Fragment)");
+            flags_desc += "DF (Don't Fragment)";
         }
         if (ip_off & IP_MF)
         {
-            snprintf(flags_desc, FLAGS_DESC_SIZE, "MF (More Fragments)");
+            flags_desc += "MF (More Fragments)";
         }
     } else {
         if (ip_off & IP_RF)
         {
-            snprintf(flags_desc, FLAGS_DESC_SIZE, "RF");
+            flags_desc = "RF";
         }
         if (ip_off & IP_DF)
         {
-            snprintf(flags_desc, FLAGS_DESC_SIZE, "DF");
+            flags_desc = "DF";
         }
         if (ip_off & IP_MF)
         {
-            snprintf(flags_desc, FLAGS_DESC_SIZE, "MF");
+            flags_desc = "MF";
         }
     }
 }
@@ -163,51 +167,51 @@ get_flags_desc(char flags_desc[FLAGS_DESC_SIZE], uint16_t ip_off, bool verbose)
  * @param verbose 
  */
 void 
-ipv4_get_protocol_name(uint8_t protocol, char protocol_name[PROTOCOL_NAME_SIZE], bool verbose)
+ipv4_get_protocol_name(uint8_t protocol, std::string& protocol_name, bool verbose)
 {
     // https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
     switch (protocol)
     {
         case IPPROTO_ICMP:
             if (verbose){
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMP (Internet Control Message Protocol)");
+                protocol_name = "ICMP (Internet Control Message Protocol)";
             } else {
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMP");
+                protocol_name = "ICMP";
             }
             break;
         case IPPROTO_ICMPV6:
             if (verbose){
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMPv6 (Internet Control Message Protocol version 6)");
+                protocol_name = "ICMPv6 (Internet Control Message Protocol version 6)";
             } else {
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "ICMPv6");
+                protocol_name = "ICMPv6";
             }
             break;
         case IPPROTO_IGMP:
             if (verbose){
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "IGMP (Internet Group Management Protocol)");
+                protocol_name = "IGMP (Internet Group Management Protocol)";
             } else {
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "IGMP");
+                protocol_name = "IGMP";
             }
             break;
         case IPPROTO_TCP:
             if (verbose){
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "TCP (Transmission Control Protocol)");
+                protocol_name = "TCP (Transmission Control Protocol)";
             } else {
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "TCP");
+                protocol_name = "TCP";
             }
             break;
         case IPPROTO_UDP:
             if (verbose){
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "UDP (User Datagram Protocol)");
+                protocol_name = "UDP (User Datagram Protocol)";
             } else {
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "UDP");
+                protocol_name = "UDP";
             }
             break;
         case IPPROTO_IPV6:
             if (verbose){
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "IPv6 Encapsulated");
+                protocol_name = "IPv6 Encapsulated";
             } else {
-                snprintf(protocol_name, PROTOCOL_NAME_SIZE, "IPv6 Encap");
+                protocol_name = "IPv6 Encap";
             }
             break;
     }

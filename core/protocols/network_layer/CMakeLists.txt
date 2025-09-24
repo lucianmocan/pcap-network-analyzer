@@ -1,7 +1,7 @@
 add_subdirectory(common)
 
 add_library(ipv4
-    ipv4/ipv4.c
+    ipv4/ipv4.cc
     ipv4/ipv4.h
 )
 
@@ -26,7 +26,7 @@ add_library(icmpv6
 )
 
 add_executable(test_ipv4
-    ipv4/test_ipv4.c
+    ipv4/test_ipv4.cc
 )
 
 target_link_libraries(test_ipv4 ipv4 dscp)
