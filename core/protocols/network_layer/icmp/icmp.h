@@ -3,10 +3,7 @@
 
 #include <netinet/in.h>
 #include <netinet/ip_icmp.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <string>
 #include "check_sum.h"
 #include "ipv4.h"
 
@@ -41,10 +38,10 @@ Destination Unreachable Message
 
 typedef struct my_icmp {
     uint8_t type;
-    char icmp_type_desc[ICMP_TYPE_DESC_SIZE];
+    std::string icmp_type_desc;
 
     uint8_t code;
-    char icmp_code_desc[ICMP_CODE_DESC_SIZE];
+    std::string icmp_code_desc;
 
     uint16_t checksum;
     uint16_t calculated_checksum;
@@ -60,7 +57,7 @@ typedef struct my_icmp {
 my_icmp_t parse_icmp(const uint8_t *packet, size_t packet_length, bool verbose);
 
 // helpers
-void get_icmp_type_desc(uint8_t type, char *desc, bool verbose);
-void get_icmp_code_desc(uint8_t type, uint8_t code, char* desc, bool verbose);
+void get_icmp_type_desc(uint8_t type, std::string& desc, bool verbose);
+void get_icmp_code_desc(uint8_t type, uint8_t code, std::string& desc, bool verbose);
 
 #endif

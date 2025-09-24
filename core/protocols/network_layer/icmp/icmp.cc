@@ -45,7 +45,7 @@ parse_icmp(const uint8_t *packet, size_t packet_length, const bool verbose)
 
     // if there's more than the header, then copy the data
     if (packet_length > ICMP_MINLEN && (icmp_p.type == ICMP_ECHO || icmp_p.type == ICMP_ECHOREPLY)){
-        icmp_p.payload = malloc(packet_length - ICMP_MINLEN + 1);
+        icmp_p.payload = (uint8_t *)malloc(packet_length - ICMP_MINLEN + 1);
         if (icmp_p.payload == NULL){
             perror("malloc");
             exit(EXIT_FAILURE);
@@ -56,7 +56,7 @@ parse_icmp(const uint8_t *packet, size_t packet_length, const bool verbose)
         // get the original ip header
         icmp_p.og_ip_header = parse_ipv4(packet + ICMP_MINLEN, verbose);
         // 64 bits
-        icmp_p.payload = malloc(8 * sizeof(uint8_t));
+        icmp_p.payload = (uint8_t *)malloc(8 * sizeof(uint8_t));
         if (icmp_p.payload == NULL){
             perror("malloc");
             exit(EXIT_FAILURE);
@@ -84,16 +84,16 @@ parse_icmp(const uint8_t *packet, size_t packet_length, const bool verbose)
  * @param verbose 
  */
 void
-get_icmp_code_desc(uint8_t type, uint8_t code, char* desc, bool verbose)
+get_icmp_code_desc(uint8_t type, uint8_t code, std::string& desc, bool verbose)
 {
     switch(type){
         case ICMP_ECHO:
         case ICMP_ECHOREPLY:
             // No code for echo request and reply
             if (verbose){
-                snprintf(desc, ICMP_CODE_DESC_SIZE, "No Code (%d)", code);
+                desc = "No Code (" + std::to_string(code) + ")";
             } else {
-                snprintf(desc, ICMP_CODE_DESC_SIZE, "0");
+                desc = "0";
             }
             break;
         case ICMP_UNREACH:
@@ -101,114 +101,114 @@ get_icmp_code_desc(uint8_t type, uint8_t code, char* desc, bool verbose)
                 // https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-codes-3
                 case ICMP_UNREACH_NET:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Network Unreachable (%d)", code);
+                        desc = "Code: Network Unreachable (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "bad net");
+                        desc = "bad net";
                     }
                     break;
                 case ICMP_UNREACH_HOST:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Host Unreachable (%d)", code);
+                        desc = "Code: Host Unreachable (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "bad host");
+                        desc = "bad host";
                     }
                     break;
                 case ICMP_UNREACH_PROTOCOL:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Protocol Unreachable (%d)", code);
+                        desc = "Code: Protocol Unreachable (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "bad protocol");
+                        desc = "bad protocol";
                     }
                     break;
                 case ICMP_UNREACH_PORT:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Port Unreachable (%d)", code);
+                        desc = "Code: Port Unreachable (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "bad port");
+                        desc = "bad port";
                     }
                     break;
                 case ICMP_UNREACH_NEEDFRAG:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Fragmentation Needed and Don't Fragment was Set (%d)", code);
+                        desc = "Code: Fragmentation Needed and Don't Fragment was Set (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "IP_DF caused drop");
+                        desc = "IP_DF caused drop";
                     }
                     break;
                 case ICMP_UNREACH_SRCFAIL:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Source Route Failed (%d)", code);
+                        desc = "Code: Source Route Failed (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "src route failed");
+                        desc = "src route failed";
                     }
                     break;
                 case ICMP_UNREACH_NET_UNKNOWN:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Destination Network Unknown (%d)", code);
+                        desc = "Code: Destination Network Unknown (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "unknown net");
+                        desc = "unknown net";
                     }
                     break;
                 case ICMP_UNREACH_HOST_UNKNOWN:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Destination Host Unknown (%d)", code);
+                        desc = "Code: Destination Host Unknown (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "unknown host");
+                        desc = "unknown host";
                     }
                     break;
                 case ICMP_UNREACH_ISOLATED:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Source Host Isolated (%d)", code);
+                        desc = "Code: Source Host Isolated (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "src host isolated");
+                        desc = "src host isolated";
                     }
                     break;
                 case ICMP_UNREACH_NET_PROHIB:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Communication with Destination Network is Administratively Prohibited (%d)", code);
+                        desc = "Code: Communication with Destination Network is Administratively Prohibited (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "prohibited access");
+                        desc = "prohibited access";
                     }
                     break;
                 case ICMP_UNREACH_HOST_PROHIB:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Communication with Destination Host is Administratively Prohibited (%d)", code);
+                        desc = "Code: Communication with Destination Host is Administratively Prohibited (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "ditto");
+                        desc = "ditto";
                     }
                     break;
                 case ICMP_UNREACH_TOSNET:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Network Unreachable for Type of Service (%d)", code);
+                        desc = "Code: Network Unreachable for Type of Service (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "bad ToS for net");
+                        desc = "bad ToS for net";
                     }
                     break;
                 case ICMP_UNREACH_TOSHOST:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Host Unreachable for Type of Service (%d)", code);
+                        desc = "Code: Host Unreachable for Type of Service (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "bad ToS for host");
+                        desc = "bad ToS for host";
                     }
                     break;
                 case ICMP_UNREACH_FILTER_PROHIB:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Communication Administratively Prohibited (%d)", code);
+                        desc = "Code: Communication Administratively Prohibited (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "admin prohib");
+                        desc = "admin prohib";
                     }
                     break;
                 case ICMP_UNREACH_HOST_PRECEDENCE:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Host Precedence Violation (%d)", code);
+                        desc = "Code: Host Precedence Violation (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "host prec vio.");
+                        desc = "host prec vio.";
                     }
                     break;
                 case ICMP_UNREACH_PRECEDENCE_CUTOFF:
                     if (verbose){
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "Code: Precedence cutoff in effect (%d)", code);
+                        desc = "Code: Precedence cutoff in effect (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMP_CODE_DESC_SIZE, "prec cutoff");
+                        desc = "prec cutoff";
                     }
                     break;
             }
@@ -224,35 +224,35 @@ get_icmp_code_desc(uint8_t type, uint8_t code, char* desc, bool verbose)
  * @param verbose 
  */
 void
-get_icmp_type_desc(uint8_t type, char *desc, bool verbose)
+get_icmp_type_desc(uint8_t type, std::string& desc, bool verbose)
 {
     switch(type){
         case ICMP_ECHOREPLY:
             if (verbose){
-                snprintf(desc, ICMP_TYPE_DESC_SIZE, "Type: Echo Reply (%d)", type);
+                desc = "Type: Echo Reply (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, ICMP_TYPE_DESC_SIZE, "Echo Reply");
+                desc = "Echo Reply";
             }
             break;
         case ICMP_UNREACH:
             if (verbose){
-                snprintf(desc, ICMP_TYPE_DESC_SIZE, "Type: Destination Unreachable (%d)", type);
+                desc = "Type: Destination Unreachable (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, ICMP_TYPE_DESC_SIZE, "Destination Unreachable");
+                desc = "Destination Unreachable";
             }
             break;
         case ICMP_ECHO:
             if (verbose){
-                snprintf(desc, ICMP_TYPE_DESC_SIZE, "Type: Echo Request (%d)", type);
-            } else {
-                snprintf(desc, ICMP_TYPE_DESC_SIZE, "Echo Request");
+                desc = "Type: Echo Request (" + std::to_string(type) + ")";
+            } else {    
+                desc = "Echo Request";
             }
             break;
         default:
             if (verbose){
-                snprintf(desc, ICMP_TYPE_DESC_SIZE, "Type: Unknown (%d)", type);
+                desc = "Type: Unknown (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, ICMP_TYPE_DESC_SIZE, "Unknown");
+                desc = "Unknown";
             }
             break;
     }
