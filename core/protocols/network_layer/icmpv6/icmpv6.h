@@ -3,14 +3,10 @@
 
 #include <netinet/in.h>
 #include <netinet/icmp6.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <string>
 #include "check_sum.h"
 #include "ipv6.h"
 
-#define ICMPV6_TYPE_DESC_SIZE 64
-#define ICMPV6_CODE_DESC_SIZE 90
 #define MY_DEST_UNREACH_MINLEN 32 // 8 bytes 
 
 #ifdef __linux__
@@ -71,10 +67,10 @@ Neighbor Solicitation Message Format
 
 typedef struct my_icmpv6 {
     uint8_t type;
-    char icmpv6_type_desc[ICMPV6_TYPE_DESC_SIZE];
+    std::string icmpv6_type_desc;
 
     uint8_t code;
-    char icmpv6_code_desc[ICMPV6_CODE_DESC_SIZE];
+    std::string icmpv6_code_desc;
 
     uint16_t checksum;
     uint16_t calculated_checksum;
@@ -92,7 +88,7 @@ typedef struct my_icmpv6 {
 my_icmpv6_t parse_icmpv6(const uint8_t *packet, size_t packet_length, uint8_t *src_ipv6, uint8_t *dst_ipv6, bool verbose);
 void free_parse_icmpv6(my_icmpv6_t *my_icmpv6);
 // helpers
-void get_icmpv6_type_desc(uint8_t type, char *desc, bool verbose);
-void get_icmpv6_code_desc(uint8_t type, uint8_t code, char *desc, bool verbose);
+void get_icmpv6_type_desc(uint8_t type, std::string& desc, bool verbose);
+void get_icmpv6_code_desc(uint8_t type, uint8_t code, std::string& desc, bool verbose);
 
 #endif

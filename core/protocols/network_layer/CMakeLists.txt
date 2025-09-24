@@ -11,17 +11,17 @@ add_library(ipv6
 )
 
 add_library(arp
-    arp/arp.c
+    arp/arp.cc
     arp/arp.h
 )
 
 add_library(icmp
-    icmp/icmp.c
+    icmp/icmp.cc
     icmp/icmp.h
 )
 
 add_library(icmpv6
-    icmpv6/icmpv6.c
+    icmpv6/icmpv6.cc
     icmpv6/icmpv6.h
 )
 
@@ -43,7 +43,7 @@ add_test(NAME test_ipv6 COMMAND test_ipv6)
 set_tests_properties(test_ipv6 PROPERTIES DEPENDS test_dscp)
 
 add_executable(test_arp
-    arp/test_arp.c
+    arp/test_arp.cc
 )
 
 target_link_libraries(test_arp arp)
@@ -52,7 +52,7 @@ set_tests_properties(test_arp PROPERTIES DEPENDS test_mac_address)
 set_tests_properties(test_arp PROPERTIES DEPENDS test_ethernet)
 
 add_executable(test_icmp
-    icmp/test_icmp.c
+    icmp/test_icmp.cc
 )
 
 target_link_libraries(test_icmp icmp)
@@ -61,7 +61,7 @@ set_tests_properties(test_icmp PROPERTIES DEPENDS test_ipv4)
 
 
 add_executable(test_icmpv6
-    icmpv6/test_icmpv6.c
+    icmpv6/test_icmpv6.cc
 )
 
 target_link_libraries(test_icmpv6 icmpv6)

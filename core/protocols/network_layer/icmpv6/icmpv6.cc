@@ -34,7 +34,7 @@ my_icmpv6_t parse_icmpv6(const uint8_t *packet, size_t packet_length, uint8_t *s
     }
 
     if (packet_length > MY_ICMPV6_MIN_LEN  && (my_icmpv6.type == ICMP6_ECHO_REQUEST || my_icmpv6.type == ICMP6_ECHO_REPLY)){
-        my_icmpv6.payload = malloc(packet_length - MY_ICMPV6_MIN_LEN + 1);
+        my_icmpv6.payload = (uint8_t *)malloc(packet_length - MY_ICMPV6_MIN_LEN + 1);
         if (my_icmpv6.payload == NULL){
             perror("malloc");
             exit(EXIT_FAILURE);
@@ -50,7 +50,7 @@ my_icmpv6_t parse_icmpv6(const uint8_t *packet, size_t packet_length, uint8_t *s
         my_icmpv6.og_ipv6_header = parse_ipv6((uint8_t*)&icmp6_hdr->icmp6_data32[1], verbose);
 
         // as much as fits in the minimum IPv6 MTU
-        my_icmpv6.payload = malloc(ICMPV6_PLD_MAXLEN * sizeof(uint8_t));
+        my_icmpv6.payload = (uint8_t *)malloc(ICMPV6_PLD_MAXLEN * sizeof(uint8_t));
         if (my_icmpv6.payload == NULL){
             perror("malloc");
             exit(EXIT_FAILURE);
@@ -65,7 +65,7 @@ my_icmpv6_t parse_icmpv6(const uint8_t *packet, size_t packet_length, uint8_t *s
 
     if (my_icmpv6.type == ND_NEIGHBOR_SOLICIT){
         // get the target address
-        my_icmpv6.payload = malloc(INET6_ADDRSTRLEN * sizeof(uint8_t));
+        my_icmpv6.payload = (uint8_t *)malloc(INET6_ADDRSTRLEN * sizeof(uint8_t));
         if (my_icmpv6.payload == NULL){
             perror("malloc");
             exit(EXIT_FAILURE);
@@ -103,51 +103,51 @@ free_parse_icmpv6(my_icmpv6_t *my_icmpv6)
  * @param verbose 
  */
 void
-get_icmpv6_code_desc(uint8_t type, uint8_t code, char *desc, bool verbose) {
+get_icmpv6_code_desc(uint8_t type, uint8_t code, std::string& desc, bool verbose) {
     switch(type){
         case ICMP6_DST_UNREACH:
         // https://www.iana.org/assignments/icmpv6-parameters/icmpv6-parameters.xhtml#icmpv6-parameters-codes-2
             switch(code){
                 case ICMP6_DST_UNREACH_NOROUTE:
                     if (verbose){
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Code: No Route to Destination (%d)", code);
-                    } else {
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "no route to dest");
+                        desc = "Code: No Route to Destination (" + std::to_string(code) + ")";
+                    } else {    
+                        desc = "no route to dest";
                     }
                     break;
                 case ICMP6_DST_UNREACH_ADMIN:
                     if (verbose){
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Code: Communication with Destination Administratively Prohibited (%d)", code);
+                        desc = "Code: Communication with Destination Administratively Prohibited (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "admin prohibited");
+                        desc = "admin prohibited";
                     }
                     break;
                 case ICMP6_DST_UNREACH_BEYONDSCOPE:
                     if (verbose){
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Code: Beyond Scope of Source Address (%d)", code);
+                        desc = "Code: Beyond Scope of Source Address (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "beyond scope of src addr");
+                        desc = "beyond scope of src addr";
                     }
                     break;
                 case ICMP6_DST_UNREACH_ADDR:
                     if (verbose){
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Code: Address Unreachable (%d)", code);
+                        desc = "Code: Address Unreachable (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "addr unreachable");
+                        desc = "addr unreachable";
                     }
                     break;
                 case ICMP6_DST_UNREACH_NOPORT:
                     if (verbose){
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Code: Port Unreachable (%d)", code);
+                        desc = "Code: Port Unreachable (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "port unreachable");
+                        desc = "port unreachable";
                     }
                     break;
                 default:
                     if (verbose){
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Code: Unknown (%d)", code);
+                        desc = "Code: Unknown (" + std::to_string(code) + ")";
                     } else {
-                        snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Unknown");
+                        desc = "Unknown";
                     }
             }
             break;
@@ -155,16 +155,16 @@ get_icmpv6_code_desc(uint8_t type, uint8_t code, char *desc, bool verbose) {
         case ICMP6_ECHO_REPLY:
         case ND_NEIGHBOR_SOLICIT:
             if (verbose){
-                snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Code: (%d)", code);
+                desc = "Code: (" + std::to_string(code) + ")";
             } else {
-                snprintf(desc, ICMPV6_CODE_DESC_SIZE, "%d", code);
+                desc = std::to_string(code);
             }
             break;
         default:
             if (verbose){
-                snprintf(desc, ICMPV6_CODE_DESC_SIZE, "Code: Unknown (%d)", code);
+                desc = "Code: Unknown (" + std::to_string(code) + ")";
             } else {
-                snprintf(desc, ICMPV6_CODE_DESC_SIZE, "%d", code);
+                desc = std::to_string(code);
             }
     }
 }
@@ -177,42 +177,42 @@ get_icmpv6_code_desc(uint8_t type, uint8_t code, char *desc, bool verbose) {
  * @param verbose 
  */
 void 
-get_icmpv6_type_desc(uint8_t type, char *desc, bool verbose)
+get_icmpv6_type_desc(uint8_t type, std::string& desc, bool verbose)
 {
     switch(type){
         case ICMP6_DST_UNREACH:
             if (verbose){
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Type: Destination Unreachable (%d)", type);
+                desc = "Type: Destination Unreachable (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "dest unreachable");
+                desc = "dest unreachable";
             }
             break;
         case ICMP6_ECHO_REQUEST:
             if (verbose){
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Type: Echo Request (%d)", type);
+                desc = "Type: Echo Request (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Echo Request");
+                desc = "Echo Request";
             }
             break;
         case ICMP6_ECHO_REPLY:
             if (verbose){
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Type: Echo Reply (%d)", type);
+                desc = "Type: Echo Reply (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Echo Reply");
+                desc = "Echo Reply";
             }
             break;
         case ND_NEIGHBOR_SOLICIT:
             if (verbose){
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Type: Neighbor Solicitation (%d)", type);
+                desc = "Type: Neighbor Solicitation (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Neighbor Solicitation");
+                desc = "Neighbor Solicitation";
             }
             break;
         default:
             if (verbose){
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Type: Unknown (%d)", type);
+                desc = "Type: Unknown (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, ICMPV6_TYPE_DESC_SIZE, "Unknown");
+                desc = "Unknown";
             }
             break;
     }

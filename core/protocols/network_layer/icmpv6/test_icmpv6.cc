@@ -1,6 +1,6 @@
 #include "icmpv6.h"
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <string>
 
 void test_parse_icmpv6_neighbor_solicit()
 {
@@ -31,12 +31,12 @@ void test_parse_icmpv6_neighbor_solicit()
 
     my_icmpv6_t icmpv6 = parse_icmpv6(icmp6_packet, sizeof(icmp6_packet), ipv6_header.raw_source_address, ipv6_header.raw_destination_address, false);
     assert(icmpv6.type == ND_NEIGHBOR_SOLICIT);
-    assert(strcmp(icmpv6.icmpv6_type_desc, "Neighbor Solicitation") == 0);
+    assert(icmpv6.icmpv6_type_desc == "Neighbor Solicitation");
     assert(icmpv6.code == 0);
-    assert(strcmp(icmpv6.icmpv6_code_desc, "0") == 0);
+    assert(icmpv6.icmpv6_code_desc == "0");
     assert(icmpv6.checksum == 0x582f);
     assert(icmpv6.checksum_valid == true);
-    assert(strcmp((char*)icmpv6.payload, "fe80::1470:453e:c74:6151") == 0);
+    assert((char*)icmpv6.payload == "fe80::1470:453e:c74:6151");
 }
 
 void test_parse_icmpv6_destination_unreachable(){
@@ -74,9 +74,9 @@ void test_parse_icmpv6_destination_unreachable(){
     my_ipv6_header_t ipv6_header = parse_ipv6(ipv6_packet, false);
     my_icmpv6_t icmpv6 = parse_icmpv6(icmp6_packet, sizeof(icmp6_packet), ipv6_header.raw_source_address, ipv6_header.raw_destination_address, false);
     assert(icmpv6.type == ICMP6_DST_UNREACH);
-    assert(strcmp(icmpv6.icmpv6_type_desc, "dest unreachable") == 0);
+    assert(icmpv6.icmpv6_type_desc == "dest unreachable");
     assert(icmpv6.code == 3);
-    assert(strcmp(icmpv6.icmpv6_code_desc, "addr unreachable") == 0);
+    assert(icmpv6.icmpv6_code_desc == "addr unreachable");
     assert(icmpv6.checksum == 0xD39D);
     assert(icmpv6.checksum_valid == true);
 
@@ -85,10 +85,10 @@ void test_parse_icmpv6_destination_unreachable(){
     assert(icmpv6.og_ipv6_header.payload_length == 12);
     printf("%d\n", icmpv6.og_ipv6_header.next_header);
     assert(icmpv6.og_ipv6_header.next_header == 17);
-    assert(strcmp(icmpv6.og_ipv6_header.next_header_name, "UDP") == 0);
+    assert(icmpv6.og_ipv6_header.next_header_name == "UDP");
     assert(icmpv6.og_ipv6_header.hop_limit == 64);
-    assert(strcmp(icmpv6.og_ipv6_header.source_address, "fe80::10d6:8e22:763:3b7") == 0);
-    assert(strcmp(icmpv6.og_ipv6_header.destination_address, "fe80::1470:453e:c74:6151") == 0);
+    assert(icmpv6.og_ipv6_header.source_address == "fe80::10d6:8e22:763:3b7");
+    assert(icmpv6.og_ipv6_header.destination_address == "fe80::1470:453e:c74:6151");
 }
 
 int main()
