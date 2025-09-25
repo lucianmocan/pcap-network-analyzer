@@ -2,8 +2,6 @@
 #define UDP_H
 
 #include <stdint.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <netinet/in.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>

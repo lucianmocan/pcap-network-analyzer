@@ -1,5 +1,5 @@
 #include "udp.h"
-#include <assert.h>
+#include <cassert>
 
 void test_parse_udp_ipv4()
 {

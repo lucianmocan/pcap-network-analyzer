@@ -1,22 +1,22 @@
 add_library(tcp
-    tcp/tcp.c
+    tcp/tcp.cc
     tcp/tcp.h
 )
 
 add_library(udp
-    udp/udp.c
+    udp/udp.cc
     udp/udp.h
 )
 
 add_executable(test_udp
-    udp/test_udp.c
+    udp/test_udp.cc
 )
 
 target_link_libraries(test_udp udp)
 add_test(NAME test_udp COMMAND test_udp)
 
 add_executable(test_tcp
-    tcp/test_tcp.c
+    tcp/test_tcp.cc
 )
 
 target_link_libraries(test_tcp tcp)
