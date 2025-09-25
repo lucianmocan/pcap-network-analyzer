@@ -56,7 +56,7 @@ parse_tcp_header(const uint8_t *packet, uint8_t *src_add, uint8_t *dst_add, uint
     //    1         -       No-Operation.
     //    2         4       Maximum Segment Size.
     if (tcp_header.data_offset > 5){
-        tcp_header.options = malloc((tcp_header.data_offset - 5) * 4);
+        tcp_header.options = (uint8_t *)malloc((tcp_header.data_offset - 5) * 4);
         if (tcp_header.options == NULL){
             perror("malloc");
             exit(EXIT_FAILURE);
@@ -81,58 +81,46 @@ parse_tcp_header(const uint8_t *packet, uint8_t *src_add, uint8_t *dst_add, uint
  * @param verbose 
  */
 void
-get_tcp_options_desc(uint8_t *options, uint8_t options_length, char *desc, bool verbose)
+get_tcp_options_desc(uint8_t *options, uint8_t options_length, std::string& desc, bool verbose)
 {   
     if (verbose)
     {
-        int write_ptr = 0;
         for (int i = 0; i < options_length; i++){
             if (options[i] == TCPOPT_EOL){
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "| End of option list ");
-                write_ptr += strlen("| End of option list ");
+                desc += "| End of option list ";
             } else
             if (options[i] == TCPOPT_NOP){
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "| No-Operation ");
-                write_ptr += strlen("| No-Operation ");
+                desc += "| No-Operation ";
             } else
             if (options[i] == TCPOPT_MAXSEG){
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "| Maximum Segment Size ");
-                write_ptr += strlen("| Maximum Segment Size ");
+                desc += "| Maximum Segment Size ";
                 int full_length = (*(uint8_t*)(options + i + 1));
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "(%d) ", ntohs(*(uint16_t*)(options + i + full_length - 2)));
-                write_ptr += strlen("(65535) ");
+                desc += "(" + std::to_string(ntohs(*(uint16_t*)(options + i + full_length - 2))) + ") ";
                 i+= full_length - 1;
             } else 
             if (options[i] != TCPOPT_EOL && options[i] != TCPOPT_NOP && options[i] != TCPOPT_MAXSEG){
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "| Unknown option ");
-                write_ptr += strlen("| Unknown option ");
+                desc += "| Unknown option ";
                 int full_length = (*(uint8_t*)(options + i + 1));
                 i+= full_length - 1;
             }
         }
     } else {
-        int write_ptr = 0;
         for (int i = 0; i < options_length; i++){
             if (options[i] == TCPOPT_EOL){
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "| eopl ");
-                write_ptr += strlen("| eopl ");
+                desc += "| eopl ";
             } else
             if (options[i] == TCPOPT_NOP){
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "| no-op ");
-                write_ptr += strlen("| no-op ");
+                desc += "| no-op ";
             } else
             if (options[i] == TCPOPT_MAXSEG){
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "| mss ");
-                write_ptr += strlen("| mss ");
+                desc += "| mss ";
                 int full_length = (*(uint8_t*)(options + i + 1));
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "(%d) ", ntohs(*(uint16_t*)(options + i + full_length - 2)));
-                write_ptr += strlen("(65535) ");
+                desc += "(" + std::to_string(ntohs(*(uint16_t*)(options + i + full_length - 2))) + ") ";
                 i+= full_length - 1;
             } else
             if (options[i] != TCPOPT_EOL && options[i] != TCPOPT_NOP && options[i] != TCPOPT_MAXSEG){
                 int full_length = (*(uint8_t*)(options + i + 1));
-                snprintf(desc + write_ptr, MY_TCP_OPTIONS_DESC_SIZE - write_ptr, "| ? op ");
-                write_ptr += strlen("| ? op ");
+                desc += "| ? op ";
                 i+= full_length - 1;
             }
         }
@@ -147,72 +135,56 @@ get_tcp_options_desc(uint8_t *options, uint8_t options_length, char *desc, bool 
  * @param verbose 
  */
 void 
-get_tcp_flags_desc(uint8_t flags, char *desc, bool verbose)
+get_tcp_flags_desc(uint8_t flags, std::string& desc, bool verbose)
 {
     if (verbose)
     {   
-        int write_ptr = strlen("Flags: ");
-        memcpy(desc, "Flags: ", write_ptr);
+        desc += "Flags: ";
         if (flags & TH_FIN){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "FIN ");
-            write_ptr += strlen("FIN ");
+            desc += "FIN ";
         }
         if (flags & TH_SYN){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "SYN ");
-            write_ptr += strlen("SYN ");
+            desc += "SYN ";
         }
         if (flags & TH_RST){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "RST ");
-            write_ptr += strlen("RST ");
+            desc += "RST ";
         }
         if (flags & TH_PUSH){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "PSH ");
-            write_ptr += strlen("PSH ");
+            desc += "PSH ";
         }
         if (flags & TH_ACK){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "ACK ");
-            write_ptr += strlen("ACK ");
+            desc += "ACK ";
         }
         if (flags & TH_URG){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "URG ");
-            write_ptr += strlen("URG ");
+            desc += "URG ";
         }
-        if (write_ptr == strlen("Flags: ")){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "None / Unknown ");
-            write_ptr += strlen("None / Unknown ");
+        if (desc == "Flags: "){
+            desc += "None / Unknown ";
         }
-        snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "(0x%x)", flags);
+        desc += "(0x" + std::to_string(flags) + ")";
     } else {
-        int write_ptr = 0;
         if (flags & TH_FIN){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "FIN ");
-            write_ptr += strlen("FIN ");
+            desc += "FIN ";
         }
         if (flags & TH_SYN){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "SYN ");
-            write_ptr += strlen("SYN ");
+            desc += "SYN ";
         }
         if (flags & TH_RST){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "RST ");
-            write_ptr += strlen("RST ");
+            desc += "RST ";
         }
         if (flags & TH_PUSH){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "PSH ");
-            write_ptr += strlen("PSH ");
+            desc += "PSH ";
         }
         if (flags & TH_ACK){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "ACK ");
-            write_ptr += strlen("ACK ");
+            desc += "ACK ";
         }
         if (flags & TH_URG){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "URG ");
-            write_ptr += strlen("URG ");
+            desc += "URG ";
         }
-        if (write_ptr == 0){
-            snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "none/? ");
-            write_ptr += strlen("none/? ");
+        if (desc.empty()){
+            desc += "none/? ";
         }
-        snprintf(desc + write_ptr, MY_TCP_FLAGS_DESC_SIZE - write_ptr, "(0x%x)", flags);
+        desc += "(0x" + std::to_string(flags) + ")";
     }
 }
 

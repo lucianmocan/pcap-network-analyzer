@@ -2,9 +2,8 @@
 #define TCP_H
 
 #include <netinet/tcp.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
+#include <string>
+
 #include "ipv4.h"
 #include "ipv6.h"
 
@@ -37,9 +36,6 @@
 
 */
 
-#define MY_TCP_FLAGS_DESC_SIZE 40
-#define MY_TCP_OPTIONS_DESC_SIZE 192
-
 typedef struct my_tcp_header {
     uint16_t source_port;
     uint16_t destination_port;
@@ -50,7 +46,7 @@ typedef struct my_tcp_header {
     uint8_t data_offset : 4;
     uint8_t reserved : 6;
     uint8_t flags: 6;
-    char tcp_flags_desc[MY_TCP_FLAGS_DESC_SIZE];
+    std::string tcp_flags_desc;
 
     uint16_t window;
     uint16_t checksum;
@@ -60,7 +56,7 @@ typedef struct my_tcp_header {
     uint16_t urgent_pointer;
 
     uint8_t *options;
-    char tcp_options_desc[MY_TCP_OPTIONS_DESC_SIZE];
+    std::string tcp_options_desc;
 
 } my_tcp_header_t;
 
@@ -68,7 +64,7 @@ my_tcp_header_t parse_tcp_header(const uint8_t *packet, uint8_t *src_add, uint8_
 
 
 // helpers
-void get_tcp_options_desc(uint8_t *options, uint8_t options_length, char *desc, bool verbose);
-void get_tcp_flags_desc(uint8_t flags, char *desc, bool verbose);
+void get_tcp_options_desc(uint8_t *options, uint8_t options_length, std::string& desc, bool verbose);
+void get_tcp_flags_desc(uint8_t flags, std::string& desc, bool verbose);
 
 #endif

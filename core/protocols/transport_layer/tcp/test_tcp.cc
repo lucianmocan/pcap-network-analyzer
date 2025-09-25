@@ -1,5 +1,5 @@
 #include "tcp.h"
-#include <assert.h>
+#include <cassert>
 
 void test_parse_tcp_ipv4()
 {
@@ -30,7 +30,7 @@ void test_parse_tcp_ipv4()
     assert(tcp.data_offset == 8);
     assert(tcp.reserved == 0);
     assert(tcp.flags == 0x011);
-    assert(strcmp(tcp.tcp_flags_desc, "FIN ACK (0x11)") == 0);
+    assert(tcp.tcp_flags_desc == "FIN ACK (0x11)");
     assert(tcp.window == 101);
     assert(tcp.checksum == 0x9361);
     assert(tcp.checksum_correct == true);
@@ -73,12 +73,12 @@ void test_parse_tcp_ipv6()
     assert(tcp.data_offset == 11);
     assert(tcp.reserved == 0);
     assert(tcp.flags == 0x002);
-    assert(strcmp(tcp.tcp_flags_desc, "SYN (0x2)") == 0);
+    assert(tcp.tcp_flags_desc == "SYN (0x2)");
     assert(tcp.window == 65535);
     assert(tcp.checksum == 0x17c5);
     assert(tcp.checksum_correct == true);
     assert(tcp.urgent_pointer == 0);
-    assert(strncmp(tcp.tcp_options_desc, "| mss (16324) | no-op | ? op | no-op | no-op | ? op | ? op | eopl | eopl", 72) == 0);
+    assert(tcp.tcp_options_desc == "| mss (16324) | no-op | ? op | no-op | no-op | ? op | ? op | eopl | eopl");
 }
 
 int main()
