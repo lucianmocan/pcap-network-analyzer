@@ -9,7 +9,10 @@
 #include "lib_bootp.h"
 #endif
 
-#include <stdbool.h>
+#include <string>
+#include <sstream>
+
+
 #include "arp.h"
 #include "ethernet.h"
 #include "mac_address.h"
@@ -44,24 +47,20 @@
 #define DHCPNAK 6
 #define DHCPRELEASE 7
 
-#define BP_OP_DESC_SIZE 32
-#define MY_DHCP_OPTION_DESC_SIZE 40
-#define MY_DHCP_OPTIONS_DESC_SIZE 256
-
 typedef struct my_dhcp_option {
     uint8_t option_code;
-    char option_code_desc[MY_DHCP_OPTION_DESC_SIZE];
+    std::string option_code_desc;
     uint8_t option_length;
     uint8_t option_value; // if I have an interesting value to store, like the dhcp message type
-    char option_value_desc[MY_DHCP_OPTIONS_DESC_SIZE];
+    std::string option_value_desc;
 } my_dhcp_option_t;
 
 typedef struct my_dhcp_bootp_header {
     uint8_t bp_op;
-    char bp_op_desc[BP_OP_DESC_SIZE];
+    std::string bp_op_desc;
 
     uint8_t bp_htype; // hardware type same as ARP
-    char bp_htype_desc[MY_ARP_HARDWARE_TYPE_DESC_SIZE];
+    std::string bp_htype_desc;
     uint8_t bp_hlen;
 
     uint32_t bp_xid; // transaction ID
@@ -69,17 +68,17 @@ typedef struct my_dhcp_bootp_header {
     uint16_t bp_secs; // seconds since boot began
     uint16_t dhcp_flags_bp_unused;
 
-    char client_ip_address[INET_ADDRSTRLEN]; // BOOTREQUEST, if known
-    char your_ip_address[INET_ADDRSTRLEN];   // filled by server if client doesn't know its own address (ciaddr was 0)
-    char server_ip_address[INET_ADDRSTRLEN]; // returned in BOOTREPLY by server
-    char gateway_ip_address[INET_ADDRSTRLEN]; // optional cross-gateway booting
+    std::string client_ip_address; // BOOTREQUEST, if known
+    std::string your_ip_address;   // filled by server if client doesn't know its own address (ciaddr was 0)
+    std::string server_ip_address; // returned in BOOTREPLY by server
+    std::string gateway_ip_address; // optional cross-gateway booting
 
-    char client_hardware_address[MY_ETHER_ADDRESS_SIZE]; // client hardware address
-    char server_host_name[64]; // server host name (optional)
+    std::string client_hardware_address; // client hardware address
+    std::string server_host_name; // server host name (optional)
 
-    char boot_file_name[128];  // 'generic' name or null in bootrequest,
-                               // fully qualified directory-path
-                               // name in bootreply.
+    std::string boot_file_name;  // 'generic' name or null in bootrequest,
+                                   // fully qualified directory-path
+                                   // name in bootreply.
     uint8_t vendor_specific_area[64]; // vendor-specific area (could be readable or not) if BOOTP
                                    // TODO: what happens if not readable ?
     uint32_t magic_cookie; // always 0x63825363
@@ -95,8 +94,8 @@ my_dhcp_bootp_header_t parse_bootp(uint8_t *packet, bool verbose);
 void free_dhcp_bootp_header(my_dhcp_bootp_header_t *bootp_header);
 
 // helpers
-void get_dhcp_message_type_desc(uint8_t message_type, char *desc, bool verbose);
+void get_dhcp_message_type_desc(uint8_t message_type, std::string& desc, bool verbose);
 void get_dhcp_options_desc(uint8_t *options, my_dhcp_bootp_header_t* bootp_header, bool verbose);
-void get_bp_op_desc(uint8_t bp_op, char *desc, bool verbose);
+void get_bp_op_desc(uint8_t bp_op, std::string& desc, bool verbose);
 
 #endif

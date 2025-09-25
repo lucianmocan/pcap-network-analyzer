@@ -1,5 +1,5 @@
 add_library(dhcp_bootp
-    dhcp_bootp/dhcp_bootp.c
+    dhcp_bootp/dhcp_bootp.cc
     dhcp_bootp/dhcp_bootp.h
     dhcp_bootp/lib_bootp.h
 )
@@ -10,7 +10,7 @@ add_library(dns
 )
 
 add_executable(test_dhcp_bootp
-    dhcp_bootp/test_dhcp_bootp.c
+    dhcp_bootp/test_dhcp_bootp.cc
 )
 
 target_link_libraries(test_dhcp_bootp dhcp_bootp arp ethernet mac_address linked_list)

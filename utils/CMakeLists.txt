@@ -5,7 +5,7 @@ add_library(linked_list
 )
 
 add_library(mac_address
-    mac_address/mac_address.c
+    mac_address/mac_address.cc
     mac_address/mac_address.h
 )
 
@@ -24,7 +24,7 @@ add_executable(test_linked_list
     linked_list/test_linked_list.c
 )
 add_executable(test_mac_address
-    mac_address/test_mac_address.c
+    mac_address/test_mac_address.cc
 )
 
 add_executable(test_check_sum

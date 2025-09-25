@@ -1,5 +1,5 @@
 #include "dhcp_bootp.h"
-#include <assert.h>
+#include <cassert>
 
 void test_parse_bootp()
 {
@@ -46,21 +46,21 @@ void test_parse_bootp()
     my_dhcp_bootp_header_t bootp_header = parse_bootp(bootp_packet, false);
 
     assert(bootp_header.bp_op == BOOTREQUEST);
-    assert(strcmp(bootp_header.bp_op_desc, "BOOTREQUEST") == 0);
+    assert(bootp_header.bp_op_desc == "BOOTREQUEST");
     assert(bootp_header.bp_htype == 1);
-    assert(strcmp(bootp_header.bp_htype_desc, "Ethernet") == 0);
+    assert(bootp_header.bp_htype_desc == "Ethernet");
     assert(bootp_header.bp_hlen == 6);
     assert(bootp_header.bp_xid == 0x39678A1F);
     assert(bootp_header.bp_secs == 0);
     assert(bootp_header.dhcp_flags_bp_unused == 0);
-    assert(strcmp(bootp_header.client_ip_address, "192.168.1.1") == 0);
-    assert(strcmp(bootp_header.your_ip_address, "192.168.1.2") == 0);
+    assert(bootp_header.client_ip_address == "192.168.1.1");
+    assert(bootp_header.your_ip_address == "192.168.1.2");
     printf("%s\n", bootp_header.server_ip_address);
-    assert(strcmp(bootp_header.server_ip_address, "") == 0);
-    assert(strcmp(bootp_header.gateway_ip_address, "") == 0);
-    assert(strcmp(bootp_header.client_hardware_address, "00:00:00:00:00:00") == 0);
-    assert(strcmp(bootp_header.server_host_name, "") == 0);
-    assert(strcmp(bootp_header.boot_file_name, "") == 0);
+    assert(bootp_header.server_ip_address == "");
+    assert(bootp_header.gateway_ip_address == "");
+    assert(bootp_header.client_hardware_address == "00:00:00:00:00:00");
+    assert(bootp_header.server_host_name == "");
+    assert(bootp_header.boot_file_name == "");
     assert(bootp_header.magic_cookie == 0x63825363);
 
     // for (int i = 0; i < strlen((char*)bootp_header.vendor_specific_area); i++)
@@ -111,22 +111,22 @@ void test_parse_dhcp()
     my_dhcp_bootp_header_t dhcp_header = parse_bootp(dhcp_packet, false);
 
     assert(dhcp_header.bp_op == BOOTREPLY);
-    assert(strcmp(dhcp_header.bp_op_desc, "BOOTREPLY") == 0);
+    assert(dhcp_header.bp_op_desc == "BOOTREPLY");
     assert(dhcp_header.bp_htype == 1);
-    assert(strcmp(dhcp_header.bp_htype_desc, "Ethernet") == 0);
+    assert(dhcp_header.bp_htype_desc == "Ethernet");
     assert(dhcp_header.bp_hlen == 6);
     assert(dhcp_header.bp_xid == 0x6c04ab58);
     assert(dhcp_header.bp_secs == 0);
     assert(dhcp_header.dhcp_flags_bp_unused == 0);
     printf("%s\n", dhcp_header.gateway_ip_address);
 
-    assert(strcmp(dhcp_header.client_ip_address, "") == 0);
-    assert(strcmp(dhcp_header.your_ip_address, "130.79.75.94") == 0);
-    assert(strcmp(dhcp_header.server_ip_address, "130.79.75.86") == 0);
-    assert(strcmp(dhcp_header.gateway_ip_address, "") == 0);
-    assert(strcmp(dhcp_header.client_hardware_address, "80:c8:8c:c0:79:00") == 0);
-    assert(strcmp(dhcp_header.server_host_name, "") == 0);
-    assert(strcmp(dhcp_header.boot_file_name, "") == 0);
+    assert(dhcp_header.client_ip_address == "");
+    assert(dhcp_header.your_ip_address == "130.79.75.94");
+    assert(dhcp_header.server_ip_address == "130.79.75.86");
+    assert(dhcp_header.gateway_ip_address == "");
+    assert(dhcp_header.client_hardware_address == "80:c8:8c:c0:79:00");
+    assert(dhcp_header.server_host_name == "");
+    assert(dhcp_header.boot_file_name == "");
     assert(dhcp_header.magic_cookie == 0x63825363);
 
     // node_t *tmp = dhcp_header.dhcp_options;
