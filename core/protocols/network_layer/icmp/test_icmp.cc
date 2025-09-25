@@ -1,5 +1,5 @@
 #include "icmp.h"
-#include <assert.h>
+#include <cassert>
 
 
 void test_parse_icmp_echo_request()
@@ -24,14 +24,14 @@ void test_parse_icmp_echo_request()
 };
     my_icmp_t icmp = parse_icmp(packet, sizeof(packet), false);
     assert(icmp.type == ICMP_ECHO);
-    assert(strcmp(icmp.icmp_type_desc, "Echo Request") == 0);
+    assert(icmp.icmp_type_desc == "Echo Request");
     assert(icmp.code == 0);
-    assert(strcmp(icmp.icmp_code_desc, "0") == 0);
+    assert(icmp.icmp_code_desc == "0");
     assert(icmp.checksum == 0xc530);
     assert(icmp.checksum_valid == true);
     assert(icmp.identifier == 0xbc24);
     assert(icmp.sequence_number == 0x0000);
-    assert(strcmp((char *)&icmp.payload[33], "!\"#$%&'()*+,-./01234567") == 0);
+    assert(std::string((char *)&icmp.payload[33]) == std::string("!\"#$%&'()*+,-./01234567"));
 }
 
 void test_parse_icmp_echo_reply()
@@ -57,14 +57,14 @@ void test_parse_icmp_echo_reply()
 
     my_icmp_t icmp = parse_icmp(packet, sizeof(packet), false);
     assert(icmp.type == ICMP_ECHOREPLY);
-    assert(strcmp(icmp.icmp_type_desc, "Echo Reply") == 0);
+    assert(icmp.icmp_type_desc == "Echo Reply");
     assert(icmp.code == 0);
-    assert(strcmp(icmp.icmp_code_desc, "0") == 0);
+    assert(icmp.icmp_code_desc == "0");
     assert(icmp.checksum == 0xcd30);
     assert(icmp.checksum_valid == true);
     assert(icmp.identifier == 0xbc24);
     assert(icmp.sequence_number == 0x0000);
-    assert(strcmp((char *)&icmp.payload[33], "!\"#$%&'()*+,-./01234567") == 0);
+    assert(std::string((char *)&icmp.payload[33]) == std::string("!\"#$%&'()*+,-./01234567"));
 }
 
 void test_parse_icmp_destination_unreachable()
@@ -86,9 +86,9 @@ void test_parse_icmp_destination_unreachable()
 
     my_icmp_t icmp = parse_icmp(packet, sizeof(packet), false);
     assert(icmp.type == ICMP_UNREACH);
-    assert(strcmp(icmp.icmp_type_desc, "Destination Unreachable") == 0);
+    assert(icmp.icmp_type_desc == "Destination Unreachable");
     assert(icmp.code == ICMP_UNREACH_HOST);
-    assert(strcmp(icmp.icmp_code_desc, "bad host") == 0);
+    assert(icmp.icmp_code_desc == "bad host");
     assert(icmp.checksum == 0xac96);
     assert(icmp.checksum_valid == true);
     assert(icmp.identifier == 0);
@@ -99,19 +99,19 @@ void test_parse_icmp_destination_unreachable()
     assert(icmp.og_ip_header.version == 4);
     assert(icmp.og_ip_header.header_length == 5);
     assert(icmp.og_ip_header.dscp_value == 0);
-    assert(strcmp(icmp.og_ip_header.dscp_desc, "CS0") == 0);
+    assert(icmp.og_ip_header.dscp_desc == "CS0");
     assert(icmp.og_ip_header.ecn_value == 0);
-    assert(strcmp(icmp.og_ip_header.ecn_desc, "Not-ECT") == 0);
+    assert(icmp.og_ip_header.ecn_desc == "Not-ECT");
     assert(icmp.og_ip_header.total_length == 60);
     assert(icmp.og_ip_header.identification == 7238);
     assert(icmp.og_ip_header.fragment_offset == 0);
     assert(icmp.og_ip_header.flags.reserved == 0);
     assert(icmp.og_ip_header.flags.dont_fragment == 1);
     assert(icmp.og_ip_header.flags.more_fragments == 0);
-    assert(strcmp(icmp.og_ip_header.flags_desc, "DF") == 0);
+    assert(icmp.og_ip_header.flags_desc == "DF");
     assert(icmp.og_ip_header.time_to_live == 64);
     assert(icmp.og_ip_header.protocol == IPPROTO_TCP);
-    assert(strcmp(icmp.og_ip_header.protocol_name, "TCP") == 0);
+    assert(icmp.og_ip_header.protocol_name == "TCP");
     assert(icmp.og_ip_header.checksum == 0x9cbc);
     assert(icmp.og_ip_header.checksum_correct == true);
 }

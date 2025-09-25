@@ -1,5 +1,5 @@
 #include "check_sum.h"
-#include <assert.h>
+#include <cassert>
 
 void test_calculate_checksum(){
     u_int8_t packet[] = {

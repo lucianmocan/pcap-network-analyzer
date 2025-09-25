@@ -10,7 +10,7 @@ add_library(mac_address
 )
 
 add_library(check_sum
-    check_sum/check_sum.c
+    check_sum/check_sum.cc
     check_sum/check_sum.h
 )
 
@@ -28,7 +28,7 @@ add_executable(test_mac_address
 )
 
 add_executable(test_check_sum
-    check_sum/test_check_sum.c
+    check_sum/test_check_sum.cc
 )
 
 # Link the test executable with the linked list library

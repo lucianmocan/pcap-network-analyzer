@@ -36,7 +36,7 @@ void test_parse_icmpv6_neighbor_solicit()
     assert(icmpv6.icmpv6_code_desc == "0");
     assert(icmpv6.checksum == 0x582f);
     assert(icmpv6.checksum_valid == true);
-    assert((char*)icmpv6.payload == "fe80::1470:453e:c74:6151");
+    assert(std::string((char*)icmpv6.payload) == std::string("fe80::1470:453e:c74:6151"));
 }
 
 void test_parse_icmpv6_destination_unreachable(){

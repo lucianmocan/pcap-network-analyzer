@@ -129,7 +129,6 @@ void test_parse_dns_complex()
     assert(authority_section->class_desc == "IN");
     assert(authority_section->ttl == 289);
     assert(authority_section->rdlength == 62);
-    printf("%s\n", authority_section->rdata_desc);
     assert(authority_section->rdata_desc == ".a.gslb.aaplimg.com..hostmaster.apple.com.f..........,...@...,");
 
     free_dns_header(&dns_header);

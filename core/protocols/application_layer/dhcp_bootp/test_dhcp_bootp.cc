@@ -55,7 +55,6 @@ void test_parse_bootp()
     assert(bootp_header.dhcp_flags_bp_unused == 0);
     assert(bootp_header.client_ip_address == "192.168.1.1");
     assert(bootp_header.your_ip_address == "192.168.1.2");
-    printf("%s\n", bootp_header.server_ip_address);
     assert(bootp_header.server_ip_address == "");
     assert(bootp_header.gateway_ip_address == "");
     assert(bootp_header.client_hardware_address == "00:00:00:00:00:00");
@@ -118,7 +117,6 @@ void test_parse_dhcp()
     assert(dhcp_header.bp_xid == 0x6c04ab58);
     assert(dhcp_header.bp_secs == 0);
     assert(dhcp_header.dhcp_flags_bp_unused == 0);
-    printf("%s\n", dhcp_header.gateway_ip_address);
 
     assert(dhcp_header.client_ip_address == "");
     assert(dhcp_header.your_ip_address == "130.79.75.94");
