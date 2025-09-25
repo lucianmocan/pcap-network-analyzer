@@ -152,7 +152,7 @@ get_dns_resource_record(uint8_t *packet, uint8_t* packet_init, my_dns_header_t *
     int next = 0;
     uint8_t *packet_current = packet + advance;
     while(count > 0){
-        resource_record_t *resource_record = malloc(sizeof(resource_record_t));
+        resource_record_t *resource_record = (resource_record_t *)malloc(sizeof(resource_record_t));
         if (resource_record == NULL){
             fprintf(stderr, "Failed to allocate memory for resource record\n");
             exit(EXIT_FAILURE);
@@ -173,8 +173,8 @@ get_dns_resource_record(uint8_t *packet, uint8_t* packet_init, my_dns_header_t *
         packet_current += 2;
         next += 2;
 
-        resource_record->class = ntohs(*(uint16_t*)packet_current);
-        get_class_desc(resource_record->class, resource_record->class_desc, verbose);
+        resource_record->data_class = ntohs(*(uint16_t*)packet_current);
+        get_class_desc(resource_record->data_class, resource_record->class_desc, verbose);
         packet_current += 2;
         next += 2;
 
@@ -186,7 +186,7 @@ get_dns_resource_record(uint8_t *packet, uint8_t* packet_init, my_dns_header_t *
         packet_current += 2;
         next += 2;
 
-        resource_record->rdata = malloc(resource_record->rdlength);
+        resource_record->rdata = (uint8_t*)malloc(resource_record->rdlength);
         if (resource_record->rdata == NULL){
             fprintf(stderr, "Failed to allocate memory for rdata\n");
             exit(EXIT_FAILURE);
@@ -229,7 +229,7 @@ get_dns_question(uint8_t *packet, my_dns_header_t *dns_header, bool verbose)
     // keep the counter in the packet for the others
     int next = 0;
     while(count > 0){
-        question_section_t *question_section = malloc(sizeof(question_section_t));
+        question_section_t *question_section = (question_section_t *)malloc(sizeof(question_section_t));
         if (question_section == NULL){
             fprintf(stderr, "Failed to allocate memory for question section\n");
             exit(EXIT_FAILURE);
@@ -258,35 +258,35 @@ get_dns_question(uint8_t *packet, my_dns_header_t *dns_header, bool verbose)
  * @param verbose 
  */
 void
-get_class_desc(uint16_t class, char *desc, bool verbose){
+get_class_desc(uint16_t data_class, std::string& desc, bool verbose){
     // https://datatracker.ietf.org/doc/html/rfc1035#section-3.2.4
-    switch(class){
+    switch(data_class){
         case CLASS_IN:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "IN (%d) the Internet", class);
+                desc = "IN (" + std::to_string(data_class) + ") the Internet";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "IN");
+                desc = "IN";
             }
             break;
         case CLASS_CH:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "CH (%d) the CHAOS class", class);
+                desc = "CH (" + std::to_string(data_class) + ") the CHAOS class";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "CH");
+                desc = "CH";
             }
             break;
         case CLASS_HS:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "HS (%d) Hesiod", class);
+                desc = "HS (" + std::to_string(data_class) + ") Hesiod";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "HS");
+                desc = "HS";
             }
             break;
         default:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "class: Unknown (%d)", class);
+                desc = "class: Unknown (" + std::to_string(data_class) + ")";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "class: ?");
+                desc = "class: ?";
             }
             break;
     }
@@ -300,84 +300,85 @@ get_class_desc(uint16_t class, char *desc, bool verbose){
  * @param verbose 
  */
 void 
-get_type_desc(uint16_t type, char *desc, bool verbose)
+get_type_desc(uint16_t type, std::string& desc, bool verbose)
 {
     // https://datatracker.ietf.org/doc/html/rfc1035#section-3.2.2
     switch(type){
         case TYPE_A:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "A (%d) host address", type);
+                desc = "A (" + std::to_string(type) + ") host address";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "A");
+                desc = "A";
             }
             break;
         case TYPE_NS:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "NS (%d) authoritative name server", type);
+                desc = "NS (" + std::to_string(type) + ") authoritative name server";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "NS");
+                desc = "NS";
             }
+            break;
         case TYPE_CNAME:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "CNAME (%d) canonical name", type);
+                desc = "CNAME (" + std::to_string(type) + ") canonical name";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "CNAME");
+                desc = "CNAME";
             }
             break;
         case TYPE_SOA:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "SOA (%d) zone of authority", type);
+                desc = "SOA (" + std::to_string(type) + ") zone of authority";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "SOA");
+                desc = "SOA";
             }
             break;
         case TYPE_PTR:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "PTR (%d) domain name pointer", type);
+                desc = "PTR (" + std::to_string(type) + ") domain name pointer";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "PTR");
+                desc = "PTR";
             }
             break;
         case TYPE_HINFO:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "HINFO (%d) host information", type);
+                desc = "HINFO (" + std::to_string(type) + ") host information";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "HINFO");
+                desc = "HINFO";
             }
             break;
         case TYPE_MINFO:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "MINFO (%d) mailbox or mail list information", type);
+                desc = "MINFO (" + std::to_string(type) + ") mailbox or mail list information";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "MINFO");
+                desc = "MINFO";
             }
             break;
         case TYPE_MX:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "MX (%d) mail exchange", type);
+                desc = "MX (" + std::to_string(type) + ") mail exchange";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "MX");
+                desc = "MX";
             }
             break;
         case TYPE_TXT:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "TXT (%d) text strings", type);
+                desc = "TXT (" + std::to_string(type) + ") text strings";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "TXT");
+                desc = "TXT";
             }
             break;
         case TYPE_HTTPS:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "HTTPS (%d) Specific Service Endpoints", type);
+                desc = "HTTPS (" + std::to_string(type) + ") Specific Service Endpoints";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "HTTPS");
+                desc = "HTTPS";
             }
             break;
         default:
             if (verbose){
-                snprintf(desc, DNS_DESC_SIZE, "qtype: Unknown (%d)", type);
+                desc = "qtype: Unknown (" + std::to_string(type) + ")";
             } else {
-                snprintf(desc, DNS_DESC_SIZE, "qtype: ?");
+                desc = "qtype: ?";
             }
             break;
     }
@@ -394,21 +395,22 @@ int
 get_dns_qname(uint8_t *packet, question_section_t *question_section)
 {
     int i = 0;
-    int offset = 0;
-    char qname[DNS_NAME_MAX_SIZE]; // at max 255 so we're good
-    while (packet[i] != 0){
+    std::string qname;
+    while (packet[i] != 0) {
         int label_length = packet[i];
-        if (offset + label_length >= sizeof(qname)){
-            fprintf(stderr, "QName exceeds maximum allowed size\n");
-            exit(EXIT_FAILURE);
+        if (label_length == 0 || label_length > DNS_NAME_MAX_SIZE) {
+            throw std::runtime_error("Invalid label length in DNS qname");
         }
-        strncpy(qname + offset, (char*)packet + i + 1, label_length);
-        offset += label_length;
-        qname[offset++] = '.'; // Add dot separator
+        if (i + label_length + 1 > DNS_NAME_MAX_SIZE) {
+            throw std::runtime_error("QName exceeds maximum allowed size");
+        }
+        if (!qname.empty()) {
+            qname += '.';
+        }
+        qname.append(reinterpret_cast<char*>(packet + i + 1), label_length);
         i += label_length + 1;
     }
-    qname[offset - 1] = '\0'; // Replace last dot with null terminator
-    snprintf(question_section->qname, sizeof(question_section->qname), "%s", qname);
+    question_section->qname = qname;
     return i + 1;
 }
 
@@ -423,21 +425,22 @@ int
 get_dns_name(uint8_t *packet, resource_record_t *resource_record)
 {
     int i = 0;
-    int offset = 0;
-    char name[DNS_NAME_MAX_SIZE]; // at max 255 so we're good
-    while (packet[i] != 0){
+    std::string name;
+    while (packet[i] != 0) {
         int label_length = packet[i];
-        if (offset + label_length >= sizeof(name)){
-            fprintf(stderr, "Name exceeds maximum allowed size\n");
-            exit(EXIT_FAILURE);
+        if (label_length == 0 || label_length > DNS_LABEL_MAX_SIZE) {
+            throw std::runtime_error("Invalid label length in DNS name");
         }
-        strncpy(name + offset, (char*)packet + i + 1, label_length);
-        offset += label_length;
-        name[offset++] = '.'; // Add dot separator
+        if (i + label_length + 1 > DNS_NAME_MAX_SIZE) {
+            throw std::runtime_error("Name exceeds maximum allowed size");
+        }
+        if (!name.empty()) {
+            name += '.';
+        }
+        name.append(reinterpret_cast<char*>(packet + i + 1), label_length);
         i += label_length + 1;
     }
-    name[offset - 1] = '\0'; // Replace last dot with null terminator
-    snprintf(resource_record->name, sizeof(resource_record->name), "%s", name);
+    resource_record->name = name;
     return i + 1;
 }
 
@@ -448,15 +451,15 @@ get_dns_name(uint8_t *packet, resource_record_t *resource_record)
  * @param desc 
  * @param verbose 
  */
-void 
-get_ra_desc(uint8_t ra, char *desc, bool verbose)
+void
+get_ra_desc(uint8_t ra, std::string& desc, bool verbose)
 {
     switch(ra){
         case 1:
             if (verbose){
-                snprintf(desc, OPCODE_DESC_SIZE, "Recursion available (%d)", ra);
+                desc = "Recursion available (" + std::to_string(ra) + ")";
             } else {
-                snprintf(desc, OPCODE_DESC_SIZE, "Rec");
+                desc = "Rec";
             }
             break;
     }
@@ -470,14 +473,14 @@ get_ra_desc(uint8_t ra, char *desc, bool verbose)
  * @param verbose 
  */
 void
-get_rd_desc(uint8_t rd, char *desc, bool verbose)
+get_rd_desc(uint8_t rd, std::string& desc, bool verbose)
 {
     switch(rd){
         case 1:
             if (verbose){
-                snprintf(desc, OPCODE_DESC_SIZE, "Recursion desired (%d)", rd);
+                desc = "Recursion desired (" + std::to_string(rd) + ")";
             } else {
-                snprintf(desc, OPCODE_DESC_SIZE, "Recursion");
+                desc = "Recursion";
             }
             break;
     }
@@ -491,15 +494,15 @@ get_rd_desc(uint8_t rd, char *desc, bool verbose)
  * @param desc 
  * @param verbose 
  */
-void 
-get_tc_desc(uint8_t tc, char *desc, bool verbose)
+void
+get_tc_desc(uint8_t tc, std::string& desc, bool verbose)
 {
     switch(tc){
         case 1:
             if (verbose){
-                snprintf(desc, OPCODE_DESC_SIZE, "Truncated (%d)", tc);
+                desc = "Truncated (" + std::to_string(tc) + ")";
             } else {
-                snprintf(desc, OPCODE_DESC_SIZE, "Trunc");
+                desc = "Trunc";
             }
             break;
     }
@@ -513,15 +516,15 @@ get_tc_desc(uint8_t tc, char *desc, bool verbose)
  * @param desc 
  * @param verbose 
  */
-void 
-get_aa_desc(uint8_t aa, char *desc, bool verbose)
+void
+get_aa_desc(uint8_t aa, std::string& desc, bool verbose)
 {
     switch(aa){
         case 1:
             if (verbose){
-                snprintf(desc, OPCODE_DESC_SIZE, "Authoritative (%d)", aa);
+                desc = "Authoritative (" + std::to_string(aa) + ")";
             } else {
-                snprintf(desc, OPCODE_DESC_SIZE, "Auth");
+                desc = "Auth";
             }
             break;
     }
@@ -535,57 +538,57 @@ get_aa_desc(uint8_t aa, char *desc, bool verbose)
  * @param verbose 
  */
 void
-get_rcode_desc(uint8_t rcode, char *desc, bool verbose)
+get_rcode_desc(uint8_t rcode, std::string& desc, bool verbose)
 {   
     // https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.1
     switch(rcode){
         case RCODE_NO_ERROR:
             if (verbose){
-                snprintf(desc, RCODE_DESC_SIZE, "No error (%d)", rcode);
+                desc = "No error (" + std::to_string(rcode) + ")";
             } else {
-                snprintf(desc, RCODE_DESC_SIZE, "res: 0 !");
+                desc = "res: 0 !";
             }
             break;
         case RCODE_FORMAT_ERROR:
             if (verbose){
-                snprintf(desc, RCODE_DESC_SIZE, "Format error (%d)", rcode);
+                desc = "Format error (" + std::to_string(rcode) + ")";
             } else {
-                snprintf(desc, RCODE_DESC_SIZE, "res: format !");
+                desc = "res: format !";
             }
             break;
         case RCODE_SERVER_FAILURE:
             if (verbose){
-                snprintf(desc, RCODE_DESC_SIZE, "Server failure (%d)", rcode);
+                desc = "Server failure (" + std::to_string(rcode) + ")";
             } else {
-                snprintf(desc, RCODE_DESC_SIZE, "res: server !");
+                desc = "res: server !";
             }
             break;
         case RCODE_NAME_ERROR:
             if (verbose){
-                snprintf(desc, RCODE_DESC_SIZE, "Name error (%d)", rcode);
+                desc = "Name error (" + std::to_string(rcode) + ")";
             } else {
-                snprintf(desc, RCODE_DESC_SIZE, "res: name !");
+                desc = "res: name !";
             }
             break;
         case RCODE_NOT_IMPLEMENTED:
             if (verbose){
-                snprintf(desc, RCODE_DESC_SIZE, "Not implemented (%d)", rcode);
+                desc = "Not implemented (" + std::to_string(rcode) + ")";
             } else {
-                snprintf(desc, RCODE_DESC_SIZE, "res: !impl");
+                desc = "res: !impl";
             }
             break;
         case RCODE_REFUSED:
             if (verbose){
-                snprintf(desc, RCODE_DESC_SIZE, "Refused (%d)", rcode);
+                desc = "Refused (" + std::to_string(rcode) + ")";
             } else {
-                snprintf(desc, RCODE_DESC_SIZE, "res: X");
+                desc = "res: X";
             }
             break;
         default:
             if (verbose){
-                snprintf(desc, RCODE_DESC_SIZE, "Unknown (%d)", rcode);
+                desc = "Unknown (" + std::to_string(rcode) + ")";
             } else {
-                snprintf(desc, RCODE_DESC_SIZE, "res: ?");
+                desc = "res: ?";
             }
             break;
     }
@@ -599,21 +602,21 @@ get_rcode_desc(uint8_t rcode, char *desc, bool verbose)
  * @param verbose 
  */
 void
-get_qr_desc(uint8_t qr, char *desc, bool verbose)
+get_qr_desc(uint8_t qr, std::string& desc, bool verbose)
 {
     switch(qr){
         case QR_QUERY:
             if (verbose){
-                snprintf(desc, QR_DESC_SIZE, "Query (%d)", qr);
+                desc = "Query (" + std::to_string(qr) + ")";
             } else {
-                snprintf(desc, QR_DESC_SIZE, "QUERY");
+                desc = "QUERY";
             }
             break;
         case QR_RESPONSE:
             if (verbose){
-                snprintf(desc, QR_DESC_SIZE, "Response (%d)", qr);
+                desc = "Response (" + std::to_string(qr) + ")";
             } else {
-                snprintf(desc, QR_DESC_SIZE, "RESPONSE");
+                desc = "RESPONSE";
             }
             break;
     }
@@ -628,35 +631,35 @@ get_qr_desc(uint8_t qr, char *desc, bool verbose)
  * @param verbose 
  */
 void
-get_opcode_desc(uint8_t opcode, char *desc, bool verbose)
+get_opcode_desc(uint8_t opcode, std::string& desc, bool verbose)
 {
     switch(opcode){
         case OP_QUERY:
             if (verbose){
-                snprintf(desc, QR_DESC_SIZE, "Message has: Standard query (%d)", opcode);
+                desc = "Message has: Standard query (" + std::to_string(opcode) + ")";
             } else {
-                snprintf(desc, QR_DESC_SIZE, "op: QUERY");
+                desc = "op: QUERY";
             }
             break;
         case OP_IQUERY:
             if (verbose){
-                snprintf(desc, QR_DESC_SIZE, "Message has: Inverse query (%d)", opcode);
+                desc = "Message has: Inverse query (" + std::to_string(opcode) + ")";
             } else {
-                snprintf(desc, QR_DESC_SIZE, "op: IQUERY");
+                desc = "op: IQUERY";
             }
             break;
         case OP_STATUS:
             if (verbose){
-                snprintf(desc, QR_DESC_SIZE, "Message has: Server status request (%d)", opcode);
+                desc = "Message has: Server status request (" + std::to_string(opcode) + ")";
             } else {
-                snprintf(desc, QR_DESC_SIZE, "op: STATUS");
+                desc = "op: STATUS";
             }
             break;
         default:
             if (verbose){
-                snprintf(desc, QR_DESC_SIZE, "Message has: Unknown (%d)", opcode);
+                desc = "Message has: Unknown (" + std::to_string(opcode) + ")";
             } else {
-                snprintf(desc, QR_DESC_SIZE, "op: ?");
+                desc = "op: ?";
             }
             break;
     }

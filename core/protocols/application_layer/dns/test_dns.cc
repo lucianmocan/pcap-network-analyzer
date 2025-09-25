@@ -1,5 +1,5 @@
 #include "dns.h"
-#include <assert.h>
+#include <cassert>
 
 void test_parse_dns_simple()
 {
@@ -15,13 +15,13 @@ void test_parse_dns_simple()
     my_dns_header_t dns_header = parse_dns(dns_packet, false);
     assert(dns_header.transaction_id == 0x019f);
     assert(dns_header.qr == 0);
-    assert(strcmp(dns_header.qr_desc, "QUERY") == 0);
+    assert(dns_header.qr_desc == "QUERY");
     assert(dns_header.opcode == 0);
-    assert(strcmp(dns_header.opcode_desc, "op: QUERY") == 0);
+    assert(dns_header.opcode_desc == "op: QUERY");
     assert(dns_header.aa == 0);
     assert(dns_header.tc == 0);
     assert(dns_header.rd == 1);
-    assert(strcmp(dns_header.rd_desc, "Recursion") == 0);
+    assert(dns_header.rd_desc == "Recursion");
     assert(dns_header.ra == 0);
     assert(dns_header.z == 0);
     assert(dns_header.rcode == 0);
@@ -33,11 +33,11 @@ void test_parse_dns_simple()
     node_t *tmp = dns_header.question_section;
     for (; tmp != NULL; tmp = tmp->next){
         question_section_t *question_section = (question_section_t*)tmp->data;
-        assert(strcmp(question_section->qname, "95.6.192.10.in-addr.arpa") == 0);
+        assert(question_section->qname == "95.6.192.10.in-addr.arpa");
         assert(question_section->qtype == 12);
-        assert(strcmp(question_section->qtype_desc, "PTR") == 0);
+        assert(question_section->qtype_desc == "PTR");
         assert(question_section->qclass == 1);
-        assert(strcmp(question_section->qclass_desc, "IN") == 0);
+        assert(question_section->qclass_desc == "IN");
     }
 }
 
@@ -74,13 +74,13 @@ void test_parse_dns_complex()
     my_dns_header_t dns_header = parse_dns(dns_packet, false);
     assert(dns_header.transaction_id == 0x4e0f);
     assert(dns_header.qr == 1);
-    assert(strcmp(dns_header.qr_desc, "RESPONSE") == 0);
+    assert(dns_header.qr_desc == "RESPONSE");
     assert(dns_header.opcode == 0);
-    assert(strcmp(dns_header.opcode_desc, "op: QUERY") == 0);
+    assert(dns_header.opcode_desc == "op: QUERY");
     assert(dns_header.aa == 0);
     assert(dns_header.tc == 0);
     assert(dns_header.rd == 1);
-    assert(strcmp(dns_header.rd_desc, "Recursion") == 0);
+    assert(dns_header.rd_desc == "Recursion");
     assert(dns_header.ra == 1);
     assert(dns_header.z == 0);
     assert(dns_header.rcode == 0);
@@ -92,45 +92,45 @@ void test_parse_dns_complex()
     // test the question
     node_t *tmp = dns_header.question_section;
     question_section_t *question_section = (question_section_t*)tmp->data;
-    assert(strcmp(question_section->qname, "valid.apple.com") == 0);
+    assert(question_section->qname == "valid.apple.com");
     assert(question_section->qtype == 65);
-    assert(strcmp(question_section->qtype_desc, "HTTPS") == 0);
+    assert(question_section->qtype_desc == "HTTPS");
     assert(question_section->qclass == 1);
-    assert(strcmp(question_section->qclass_desc, "IN") == 0);
+    assert(question_section->qclass_desc == "IN");
 
     // test the answers (2)
     tmp = dns_header.answer_section;
     resource_record_t *answer_section = (resource_record_t*)tmp->data;
     assert(answer_section->type == 5);
-    assert(strcmp(answer_section->type_desc, "CNAME") == 0);
-    assert(answer_section->class == 1);
-    assert(strcmp(answer_section->class_desc, "IN") == 0);
+    assert(answer_section->type_desc == "CNAME");
+    assert(answer_section->data_class == 1);
+    assert(answer_section->class_desc == "IN");
     assert(answer_section->ttl == 5972);
     assert(answer_section->rdlength == 35);
-    assert(strcmp(answer_section->rdata_desc, ".valid.origin-apple.com.akadns.net.") == 0);
+    assert(answer_section->rdata_desc == ".valid.origin-apple.com.akadns.net.");
 
     tmp = dns_header.answer_section->next;
     answer_section = (resource_record_t*)tmp->data;
     assert(answer_section->type == 5);
-    assert(strcmp(answer_section->type_desc, "CNAME") == 0);
-    assert(answer_section->class == 1);
-    assert(strcmp(answer_section->class_desc, "IN") == 0);
+    assert(answer_section->type_desc == "CNAME");
+    assert(answer_section->data_class == 1);
+    assert(answer_section->class_desc == "IN");
     assert(answer_section->ttl == 0);
     assert(answer_section->rdlength == 27);
-    assert(strcmp(answer_section->rdata_desc, ".valid-apple.g.aaplimg.com.") == 0);
+    assert(answer_section->rdata_desc == ".valid-apple.g.aaplimg.com.");
 
 
     // test the authority (1)
     tmp = dns_header.authority_section;
     resource_record_t *authority_section = (resource_record_t*)tmp->data;
     assert(authority_section->type == 6);
-    assert(strcmp(authority_section->type_desc, "SOA") == 0);
-    assert(authority_section->class == 1);
-    assert(strcmp(authority_section->class_desc, "IN") == 0);
+    assert(authority_section->type_desc == "SOA");
+    assert(authority_section->data_class == 1);
+    assert(authority_section->class_desc == "IN");
     assert(authority_section->ttl == 289);
     assert(authority_section->rdlength == 62);
     printf("%s\n", authority_section->rdata_desc);
-    assert(strcmp(authority_section->rdata_desc, ".a.gslb.aaplimg.com..hostmaster.apple.com.f..........,...@...,") == 0);
+    assert(authority_section->rdata_desc == ".a.gslb.aaplimg.com..hostmaster.apple.com.f..........,...@...,");
 
     free_dns_header(&dns_header);
 }

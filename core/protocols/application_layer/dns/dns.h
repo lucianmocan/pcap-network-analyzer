@@ -1,19 +1,16 @@
 #ifndef DNS_H
 #define DNS_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <stdint.h>
-#include <string.h>
 #include <arpa/inet.h>
 #include <ctype.h>
 
+#include <string>
+
 #include "linked_list.h"
 
-#define DNS_NAME_MAX_SIZE 1024
+#define DNS_NAME_MAX_SIZE 255
 #define DNS_LABEL_MAX_SIZE 63
-#define DNS_DESC_SIZE 64
 
 #define PORT_DNS 53
 
@@ -81,9 +78,6 @@ https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.1
 
 */
 
-#define QR_DESC_SIZE 42
-#define OPCODE_DESC_SIZE 40
-#define RCODE_DESC_SIZE 40
 #define RDATA_MAX_SIZE 512
 
 // QR values
@@ -127,23 +121,23 @@ https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.1
 #define IS_ADDITIONAL 2
 
 typedef struct question_section {
-    char qname[DNS_NAME_MAX_SIZE];   // a domain name represented as a sequence of labels, where each label consists of a length octet followed by that number of octets.
+    std::string qname;   // a domain name represented as a sequence of labels, where each label consists of a length octet followed by that number of octets.
     uint16_t qtype;  // a two octet code which specifies the type of the query.
-    char qtype_desc[DNS_DESC_SIZE];
+    std::string qtype_desc;
     uint16_t qclass; // a two octet code that specifies the class of the query.
-    char qclass_desc[DNS_DESC_SIZE];
+    std::string qclass_desc;
 } question_section_t;
 
 typedef struct resource_record {
-    char name[DNS_NAME_MAX_SIZE];    // a domain name to which this resource record pertains.
+    std::string name;    // a domain name to which this resource record pertains.
     uint16_t type;   // two octets containing one of the RR type codes.
-    char type_desc[DNS_DESC_SIZE];
-    uint16_t class;  // two octets which specify the class of the data in the RDATA field.
-    char class_desc[DNS_DESC_SIZE];
+    std::string type_desc;
+    uint16_t data_class;  // two octets which specify the class of the data in the RDATA field.
+    std::string class_desc;
     uint32_t ttl;    
     uint16_t rdlength; // the length in octets of the RDATA field.
     uint8_t* rdata; 
-    char rdata_desc[RDATA_MAX_SIZE]; 
+    std::string rdata_desc;
 } resource_record_t;
 
 typedef struct my_dns_header {
@@ -152,7 +146,7 @@ typedef struct my_dns_header {
     // A one bit field that specifies whether this message is a
     // query (0), or a response (1).
     uint8_t qr:1;
-    char qr_desc[QR_DESC_SIZE];
+    std::string qr_desc;
 
     // A four bit field that specifies kind of query in this
     // message.  This value is set by the originator of a query
@@ -162,23 +156,23 @@ typedef struct my_dns_header {
     // 2 a server status request (STATUS)
     // 3-15 reserved for future use
     uint8_t opcode;
-    char opcode_desc[OPCODE_DESC_SIZE];
+    std::string opcode_desc;
 
     uint8_t aa:1; // Authoritative Answer, valid in responses
-    char aa_desc[OPCODE_DESC_SIZE];
+    std::string aa_desc;
 
     uint8_t tc:1; // TrunCation, set if message was truncated
-    char tc_desc[OPCODE_DESC_SIZE];
+    std::string tc_desc;
     uint8_t rd:1; // Recursion Desired (set in a query and copied into the response)
                   // In a response, it specifies that the server can do recursive queries
-    char rd_desc[OPCODE_DESC_SIZE];
+    std::string rd_desc;
     uint8_t ra:1; // Recursion Available, (set or cleared in a response)
-    char ra_desc[OPCODE_DESC_SIZE];
+    std::string ra_desc;
 
     uint8_t z:3;  // Reserved for future use
     
     uint8_t rcode:4; // Response code
-    char rcode_desc[RCODE_DESC_SIZE];
+    std::string rcode_desc;
 
     uint16_t qdcount; // the number of entries in the question section.
     uint16_t ancount; // the number of resource records in the answer section.
@@ -197,16 +191,16 @@ void free_dns_header(my_dns_header_t *dns_header);
 // helpers
 // void get_dns_name(const uint8_t *packet, my_dns_header_t *dns_header);
 
-void get_ra_desc(uint8_t ra, char *desc, bool verbose);
-void get_rd_desc(uint8_t rd, char *desc, bool verbose);
-void get_tc_desc(uint8_t tc, char *desc, bool verbose);
-void get_aa_desc(uint8_t aa, char *desc, bool verbose);
-void get_rcode_desc(uint8_t rcode, char *desc, bool verbose);
-void get_opcode_desc(uint8_t opcode, char *desc, bool verbose);
-void get_qr_desc(uint8_t qr, char *desc, bool verbose);
-void get_class_desc(uint16_t class, char *desc, bool verbose);
-void get_type_desc(uint16_t type, char *desc, bool verbose);
-void process_rdata(uint8_t *rdata, char* desc, size_t rdata_length);
+void get_ra_desc(uint8_t ra, std::string& desc, bool verbose);
+void get_rd_desc(uint8_t rd, std::string& desc, bool verbose);
+void get_tc_desc(uint8_t tc, std::string& desc, bool verbose);
+void get_aa_desc(uint8_t aa, std::string& desc, bool verbose);
+void get_rcode_desc(uint8_t rcode, std::string& desc, bool verbose);
+void get_opcode_desc(uint8_t opcode, std::string& desc, bool verbose);
+void get_qr_desc(uint8_t qr, std::string& desc, bool verbose);
+void get_class_desc(uint16_t data_class, std::string& desc, bool verbose);
+void get_type_desc(uint16_t type, std::string& desc, bool verbose);
+void process_rdata(uint8_t *rdata, std::string& desc, size_t rdata_length);
 
 int get_dns_name(uint8_t *packet, resource_record_t *resource_record);
 int get_dns_qname(uint8_t *packet, question_section_t *question_section);
